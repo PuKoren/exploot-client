@@ -13,7 +13,7 @@ Menu::Menu(IrrlichtDevice* device){
     camera->setFarValue(42000.0f);
 
     terrain = smgr->addTerrainSceneNode(
-                "../textures/terrain/heightmap.jpg",
+                "../resources/terrain/heightmap.jpg",
                 0,                  // parent node
                 -1,                 // node id
                 core::vector3df(0.f, 0.f, 0.f),     // position
@@ -26,7 +26,7 @@ Menu::Menu(IrrlichtDevice* device){
                 );
 
     terrain->setMaterialFlag(video::EMF_LIGHTING, false);
-    terrain->setMaterialTexture(0, driver->getTexture("../textures/terrain/texture.jpg"));
+    terrain->setMaterialTexture(0, driver->getTexture("../resources/terrain/texture.jpg"));
     terrain->scaleTexture(1.0f, 20.0f);
 }
 
