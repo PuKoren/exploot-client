@@ -1,6 +1,7 @@
 #include <irrlicht/irrlicht.h>
 #include "EventReceiver.h"
 #include "Bullet.h"
+#include "Menu.h"
 using namespace irr;
 
 enum GAME_STATE{
@@ -25,4 +26,5 @@ private:
     gui::IGUIEnvironment* guienv;
     Bullet* bullet;
     MyEventReceiver event;
+    Menu* menu;
 };
