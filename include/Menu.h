@@ -5,8 +5,10 @@ class Menu{
 private:
     scene::ICameraSceneNode* camera;
     scene::ITerrainSceneNode* terrain;
+    video::IVideoDriver* driver;
+    scene::ISceneManager* smgr;
 public:
-    Menu(scene::ISceneManager* smgr, video::IVideoDriver* driver);
+    Menu(IrrlichtDevice* device);
     ~Menu();
     void Update(u32 DeltaTime);
 };

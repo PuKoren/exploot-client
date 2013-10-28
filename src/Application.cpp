@@ -34,9 +34,8 @@ Application::~Application(){
 }
 
 void Application::init(){
-
-    menu = new Menu(smgr, driver);
-
+    menu = new Menu(device);
+    delete menu;
 }
 
 bool Application::run(){

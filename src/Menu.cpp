@@ -1,6 +1,12 @@
 #include "Menu.h"
 
-Menu::Menu(scene::ISceneManager* smgr, video::IVideoDriver* driver){
+Menu::Menu(IrrlichtDevice* device){
+    smgr = device->getSceneManager();
+    driver = device->getVideoDriver();
+
+    if(!smgr || !driver)
+        return;
+
     camera = smgr->addCameraSceneNodeFPS(0,100.0f,1.2f);
     camera->setPosition(core::vector3df(2700*2,255*2,2600*2));
     camera->setTarget(core::vector3df(2397*2,343*2,2700*2));
@@ -25,8 +31,8 @@ Menu::Menu(scene::ISceneManager* smgr, video::IVideoDriver* driver){
 }
 
 Menu::~Menu(){
-    camera->drop();
-    terrain->drop();
+    camera->remove();
+    terrain->remove();
 }
 
 void Menu::Update(u32 DeltaTime){
