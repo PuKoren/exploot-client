@@ -33,6 +33,9 @@
     <ClCompile Include="..\src\Network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\submodules\RealisticWaterSceneNode\RealisticWater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Application.h">

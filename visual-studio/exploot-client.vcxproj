@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)build</OutDir>
+    <OutDir>$(SolutionDir)build\</OutDir>
     <IntDir>tmp\$(Configuration)\</IntDir>
     <TargetName>exploot</TargetName>
   </PropertyGroup>
@@ -55,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include\;include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\;include;..\submodules\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,6 +88,7 @@
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Menu.cpp" />
     <ClCompile Include="..\src\Network.cpp" />
+    <ClCompile Include="..\submodules\RealisticWaterSceneNode\RealisticWater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Application.h" />
