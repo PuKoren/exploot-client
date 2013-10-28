@@ -1,0 +1,3 @@
+[submodule "submodules/RealisticWaterSceneNode"]
+	path = submodules/RealisticWaterSceneNode
+	url = https://github.com/elvman/RealisticWaterSceneNode.git

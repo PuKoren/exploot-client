@@ -1,7 +1,7 @@
 #include "Application.h"
 
 Application::Application(){
-    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, false, &event);
+    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, true, &event);
     if (device){
         device->setWindowCaption(L"PukoWorld - Client - 0.1");
 
@@ -34,6 +34,20 @@ Application::~Application(){
 }
 
 void Application::init(){
+    if (!driver->queryFeature(video::EVDF_PIXEL_SHADER_1_1) &&
+        !driver->queryFeature(video::EVDF_ARB_FRAGMENT_PROGRAM_1))
+    {
+        device->getLogger()->log("WARNING: Pixel shaders disabled "\
+            "because of missing driver/hardware support.");
+    }
+
+    if (!driver->queryFeature(video::EVDF_VERTEX_SHADER_1_1) &&
+        !driver->queryFeature(video::EVDF_ARB_VERTEX_PROGRAM_1))
+    {
+        device->getLogger()->log("WARNING: Vertex shaders disabled "\
+            "because of missing driver/hardware support.");
+    }
+
     menu = new Menu(device);
 }
 
