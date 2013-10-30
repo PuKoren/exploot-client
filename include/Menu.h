@@ -1,5 +1,6 @@
 #include <vector>
 #include <irrlicht/irrlicht.h>
+#include "config.h"
 #include "CGUITTFont.h"
 #include "RealisticWaterSceneNode\RealisticWater.h"
 using namespace irr;
@@ -15,7 +16,6 @@ private:
     gui::IGUIEnvironment* guienv;
     gui::CGUITTFont* title_font;
     gui::CGUITTFont* default_font;
-    std::vector<gui::IGUIStaticText*> textList;
 
     video::IVideoDriver* driver;
     scene::ISceneManager* smgr;

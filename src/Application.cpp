@@ -2,6 +2,7 @@
 
 Application::Application(){
     device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, true, &event);
+    device->setResizable(true);
     if (device){
         //irrlicht managers
         driver = device->getVideoDriver();
@@ -9,7 +10,6 @@ Application::Application(){
         guienv = device->getGUIEnvironment();
         smgr->setAmbientLight(video::SColorf(0.1f,0.1f,0.1f,1.f));
         smgr->setShadowColor(video::SColor(150,0,0,0));
-        device->getCursorControl()->setVisible(false);
 
         //bullet manager
         bullet = new Bullet();
