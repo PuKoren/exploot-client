@@ -34,7 +34,7 @@ Menu::Menu(IrrlichtDevice* device){
         driver->getTexture("../resources/skyboxes/bluesky/front.jpg"),
         driver->getTexture("../resources/skyboxes/bluesky/back.jpg"));
 
-    water = new RealisticWaterSceneNode(smgr, 2560, 2560, "../resources/submodules/RealisticWaterSceneNode/", core::dimension2du(2560, 2560), terrain, -1);
+    water = new RealisticWaterSceneNode(smgr, 2560, 2560, "../submodules/RealisticWaterSceneNode/", core::dimension2du(2560, 2560), terrain, -1);
     water->setPosition(core::vector3df(128, 45, 128));
     water->setWindForce(2.f);
     water->setScale(core::vector3df(1.f/terrain->getScale().X, 1, 1.f/terrain->getScale().Z));
