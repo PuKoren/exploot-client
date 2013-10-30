@@ -4,7 +4,7 @@
 #include "EventReceiver.h"
 #include "config.h"
 #include "CGUITTFont.h"
-#include "RealisticWaterSceneNode\RealisticWater.h"
+#include "RealisticWaterSceneNode/RealisticWater.h"
 using namespace irr;
 
 class Menu{

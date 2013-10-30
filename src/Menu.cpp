@@ -60,14 +60,14 @@ Menu::Menu(IrrlichtDevice* device){
 
     guienv = device->getGUIEnvironment();
     guienv->getSkin()->setFont(default_font, gui::EGDF_DEFAULT);
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_FACE, video::SColor(100, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_SHADOW, video::SColor(180, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_DARK_SHADOW, video::SColor(180, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_HIGH_LIGHT, video::SColor(100, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_LIGHT, video::SColor(120, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_EDITABLE, video::SColor(45, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_FOCUSED_EDITABLE, video::SColor(25, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_BUTTON_TEXT, video::SColor(255, 255, 255, 255));
+    guienv->getSkin()->setColor(gui::EGDC_3D_FACE, video::SColor(100, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_3D_SHADOW, video::SColor(180, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_3D_DARK_SHADOW, video::SColor(180, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_3D_HIGH_LIGHT, video::SColor(100, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_3D_LIGHT, video::SColor(120, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_EDITABLE, video::SColor(45, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_FOCUSED_EDITABLE, video::SColor(25, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGDC_BUTTON_TEXT, video::SColor(255, 255, 255, 255));
 
     gui::IGUIStaticText* version = guienv->addStaticText(L"v0.0.1", core::rect<irr::s32>(0,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
     version->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
@@ -132,7 +132,7 @@ Menu::~Menu(){
 }
 
 void Menu::update(u32 DeltaTime, GAME_STATE* gs){
-    if(eventReceiver.IsKeyDown(EKEY_CODE::KEY_RETURN)){
+    if(eventReceiver.IsKeyDown(KEY_RETURN)){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
             std::wcout << "Trying to log in user " << loginBox->getText() << std::endl;
         }else{
@@ -140,8 +140,8 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
         }
     }
 
-    if(eventReceiver.IsKeyDown(EKEY_CODE::KEY_ESCAPE)){
-        *gs = GAME_STATE::MENU_EXIT;
+    if(eventReceiver.IsKeyDown(KEY_ESCAPE)){
+        *gs = MENU_EXIT;
     }
 }
 
