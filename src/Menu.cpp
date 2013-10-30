@@ -6,14 +6,6 @@ Menu::Menu(IrrlichtDevice* device){
 
     if(!smgr || !driver)
         return;
-
-    camera = smgr->addCameraSceneNodeFPS(0,100.0f,1.2f);
-    camera->setPosition(core::vector3df(1696.99f,82.1664f,1117.61f));
-    camera->setTarget(core::vector3df(10,0,0));
-    camera->setRotation(core::vector3df(7.91f, 188.f, 0.f));
-
-    camera->setFarValue(8000.f);
-    
     
     terrain = smgr->addTerrainSceneNode(
                 "../resources/terrain/heightmap.jpg",
@@ -30,6 +22,8 @@ Menu::Menu(IrrlichtDevice* device){
 
     terrain->setMaterialFlag(video::EMF_LIGHTING, false);
     terrain->setMaterialTexture(0, driver->getTexture("../resources/terrain/texture.jpg"));
+    terrain->setMaterialTexture(1, driver->getTexture("../resources/terrain/detailmap3.jpg"));
+	terrain->setMaterialType(video::EMT_DETAIL_MAP);
     terrain->scaleTexture(1.0f, 20.0f);
 
     skybox = smgr->addSkyBoxSceneNode(
@@ -40,28 +34,65 @@ Menu::Menu(IrrlichtDevice* device){
         driver->getTexture("../resources/skyboxes/bluesky/front.jpg"),
         driver->getTexture("../resources/skyboxes/bluesky/back.jpg"));
 
-    water = new RealisticWaterSceneNode(smgr, 256, 256, "../resources/submodules/RealisticWaterSceneNode/", core::dimension2du(2560, 2560), terrain, -1);
+    water = new RealisticWaterSceneNode(smgr, 2560, 2560, "../resources/submodules/RealisticWaterSceneNode/", core::dimension2du(2560, 2560), terrain, -1);
     water->setPosition(core::vector3df(128, 45, 128));
     water->setWindForce(2.f);
+    water->setScale(core::vector3df(1.f/terrain->getScale().X, 1, 1.f/terrain->getScale().Z));
     water->setWindDirection(core::vector2df(1.f, 0.5f));
     water->setWaterColor(video::SColorf(1, 1, 1, 0.f));
+    water->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 
     scene::IAnimatedMesh* mesh = smgr->getMesh("../resources/models/trees/tree4-fbx.obj");
-    scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode(mesh);
-    if(node){
-        node->setScale(core::vector3df(30.f, 30.f, 30.f));
-        node->setMaterialFlag(video::EMF_LIGHTING, false);
-        node->setMaterialType( video::EMT_TRANSPARENT_ALPHA_CHANNEL);
-        node->setPosition(core::vector3df(2160, 20, 700));
+    tree = smgr->addAnimatedMeshSceneNode(mesh);
+    if(tree){
+        tree->setScale(core::vector3df(30.f, 30.f, 30.f));
+        tree->setMaterialFlag(video::EMF_LIGHTING, false);
+        tree->setMaterialType( video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+        tree->setPosition(core::vector3df(2160, 20, 700));
     }
+
+    title_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), 
+        "../resources/fonts/BEBAS.ttf", 78);
+    default_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), 
+        "../resources/fonts/Aaargh.ttf", 16);
+
+    guienv = device->getGUIEnvironment();
+    guienv->getSkin()->setFont(default_font, gui::EGDF_DEFAULT);
+
+    textList.push_back(guienv->addStaticText(L"v0.0.1", core::rect<irr::s32>(0,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true));
+    textList[textList.size()-1]->setTextAlignment(gui::EGUIA_LOWERRIGHT, gui::EGUIA_LOWERRIGHT);
+    textList[textList.size()-1]->setOverrideColor(video::SColor(255, 255, 255, 255));
+
+    textList.push_back(guienv->addStaticText(L"EXPLOOT", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true));
+    textList[textList.size()-1]->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
+    textList[textList.size()-1]->setOverrideColor(video::SColor(255, 255, 255, 255));
+    textList[textList.size()-1]->setOverrideFont(title_font);
+
+    camera = smgr->addCameraSceneNode();
+    camera->setPosition(core::vector3df(1950, 340, 2100));
+    camera->setTarget(core::vector3df(166, 410, -166));
+    camera->setFarValue(8000.f);
 }
 
 Menu::~Menu(){
-    camera->remove();
-    water->remove();
-    terrain->remove();
-    skybox->remove();
+    //clear gui env
+    guienv->clear();
+    title_font->drop();
+    default_font->drop();
+
+    //clear scene
+    smgr->clear();
+    camera->drop();
+    water->drop();
+    terrain->drop();
+    tree->drop();
+    skybox->drop();
 }
 
-void Menu::Update(u32 DeltaTime){
+void Menu::update(u32 DeltaTime){
+
+}
+
+void Menu::drawAll(){
+    guienv->drawAll();
 }

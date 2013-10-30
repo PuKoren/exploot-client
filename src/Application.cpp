@@ -3,8 +3,6 @@
 Application::Application(){
     device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, true, &event);
     if (device){
-        device->setWindowCaption(L"PukoWorld - Client - 0.1");
-
         //irrlicht managers
         driver = device->getVideoDriver();
         smgr = device->getSceneManager();
@@ -66,13 +64,13 @@ bool Application::run(){
         
         switch(state){
             case MENU_MAIN:
-                menu->Update(DeltaTime);
+                menu->update(DeltaTime);
                 break;
         }
 
         int fps = driver->getFPS();
         if (lastFPS != fps){
-            core::stringw str = L"PukoWorld - Client - 0.1 [";
+            core::stringw str = L"Exploot - Client - 0.0.1 [";
             str += driver->getName();
             str += "] FPS:";
             str += fps;
@@ -81,9 +79,16 @@ bool Application::run(){
             lastFPS = fps;
         }
 
-        driver->beginScene(true, true, video::SColor(255,100,100,100));
-        smgr->drawAll();
-        driver->endScene();
+        if(device->isWindowActive()){
+            driver->beginScene(true, true, video::SColor(255,100,100,100));
+            smgr->drawAll();
+            switch(state){
+                case MENU_MAIN:
+                    menu->drawAll();
+                    break;
+            }
+            driver->endScene();
+        }
     }
 
     return true;
