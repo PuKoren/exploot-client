@@ -4,6 +4,7 @@ Menu::Menu(IrrlichtDevice* device){
     smgr = device->getSceneManager();
     driver = device->getVideoDriver();
     device->getCursorControl()->setVisible(true);
+    device->setEventReceiver(&eventReceiver);
 
     if(!smgr || !driver)
         return;
@@ -55,7 +56,7 @@ Menu::Menu(IrrlichtDevice* device){
     title_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), 
         "../resources/fonts/BEBAS.ttf", 78);
     default_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), 
-        "../resources/fonts/Aaargh.ttf", 16);
+        "../resources/fonts/Cicle_Gordita.ttf", 16);
 
     guienv = device->getGUIEnvironment();
     guienv->getSkin()->setFont(default_font, gui::EGDF_DEFAULT);
@@ -66,6 +67,7 @@ Menu::Menu(IrrlichtDevice* device){
     guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_LIGHT, video::SColor(120, 0, 0, 0));
     guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_EDITABLE, video::SColor(45, 0, 0, 0));
     guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_FOCUSED_EDITABLE, video::SColor(25, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_BUTTON_TEXT, video::SColor(255, 255, 255, 255));
 
     gui::IGUIStaticText* version = guienv->addStaticText(L"v0.0.1", core::rect<irr::s32>(0,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
     version->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
@@ -85,9 +87,8 @@ Menu::Menu(IrrlichtDevice* device){
     overlay->getCloseButton()->setVisible(false);
     overlay->setDraggable(false);
 
-    gui::IGUIEditBox* loginBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
-    gui::IGUIEditBox* passwordBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
-
+    loginBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
+    passwordBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
     loginBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     passwordBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     loginBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT));
@@ -102,11 +103,17 @@ Menu::Menu(IrrlichtDevice* device){
     loginText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     loginText->setOverrideColor(video::SColor(255, 255, 255, 255));
 
-    gui::IGUIStaticText* passwordText = guienv->addStaticText(L"Pass", core::rect<irr::s32>(0, 0, 50, TEXTBOX_HEIGHT), false, true, overlay);
+    gui::IGUIStaticText* passwordText = guienv->addStaticText(L"Pass", core::rect<s32>(0, 0, 50, TEXTBOX_HEIGHT), false, true, overlay);
     passwordText->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2 - passwordText->getTextWidth() -5, TEXTBOX_HEIGHT*2 + 5));
     passwordText->setTextAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_CENTER);
     passwordText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     passwordText->setOverrideColor(video::SColor(255, 255, 255, 255));
+
+    gui::IGUIStaticText* noticeText = guienv->addStaticText(L"Press \"Enter\" to log in or \"Escape\" to quit.", core::rect<irr::s32>(0, 0, LOGIN_WIDTH, 25), false, true, overlay);
+    noticeText->setRelativePosition(core::position2di(0, LOGIN_HEIGHT - noticeText->getTextHeight() - 10));
+    noticeText->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
+    noticeText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
+    noticeText->setOverrideColor(video::SColor(255, 255, 255, 255));
 
     camera = smgr->addCameraSceneNode();
     camera->setPosition(core::vector3df(1950, 340, 2100));
@@ -122,15 +129,20 @@ Menu::~Menu(){
 
     //clear scene
     smgr->clear();
-    camera->drop();
-    water->drop();
-    terrain->drop();
-    tree->drop();
-    skybox->drop();
 }
 
-void Menu::update(u32 DeltaTime){
+void Menu::update(u32 DeltaTime, GAME_STATE* gs){
+    if(eventReceiver.IsKeyDown(EKEY_CODE::KEY_RETURN)){
+        if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
+            std::wcout << "Trying to log in user " << loginBox->getText() << std::endl;
+        }else{
 
+        }
+    }
+
+    if(eventReceiver.IsKeyDown(EKEY_CODE::KEY_ESCAPE)){
+        *gs = GAME_STATE::MENU_EXIT;
+    }
 }
 
 void Menu::drawAll(){

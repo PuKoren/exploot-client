@@ -1,7 +1,7 @@
 #include "Application.h"
 
 Application::Application(){
-    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, true, &event);
+    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, true);
     device->setResizable(true);
     if (device){
         //irrlicht managers
@@ -61,13 +61,18 @@ bool Application::run(){
         DeltaTime = irrTimer->getTime() - TimeStamp;
         TimeStamp = irrTimer->getTime();
         bullet->UpdatePhysics(DeltaTime);
-        
+
         switch(state){
             case MENU_MAIN:
-                menu->update(DeltaTime);
+                menu->update(DeltaTime, &state);
+                break;
+            case MENU_EXIT:
+                delete menu;
+                device->closeDevice();
+                return true;
                 break;
         }
-
+        
         int fps = driver->getFPS();
         if (lastFPS != fps){
             core::stringw str = L"Exploot - Client - 0.0.1 [";
@@ -78,7 +83,7 @@ bool Application::run(){
             device->setWindowCaption(str.c_str());
             lastFPS = fps;
         }
-
+        
         if(device->isWindowActive()){
             driver->beginScene(true, true, video::SColor(255,100,100,100));
             smgr->drawAll();

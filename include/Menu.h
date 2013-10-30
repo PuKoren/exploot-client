@@ -1,5 +1,7 @@
 #include <vector>
+#include <iostream>
 #include <irrlicht/irrlicht.h>
+#include "EventReceiver.h"
 #include "config.h"
 #include "CGUITTFont.h"
 #include "RealisticWaterSceneNode\RealisticWater.h"
@@ -17,11 +19,16 @@ private:
     gui::CGUITTFont* title_font;
     gui::CGUITTFont* default_font;
 
+    gui::IGUIEditBox*  loginBox;
+    gui::IGUIEditBox*  passwordBox;
+
     video::IVideoDriver* driver;
     scene::ISceneManager* smgr;
+
+    MyEventReceiver eventReceiver;
 public:
     Menu(IrrlichtDevice* device);
     ~Menu();
-    void update(u32 DeltaTime);
+    void update(u32 DeltaTime, GAME_STATE*);
     void drawAll();
 };
