@@ -59,7 +59,13 @@ Menu::Menu(IrrlichtDevice* device){
 
     guienv = device->getGUIEnvironment();
     guienv->getSkin()->setFont(default_font, gui::EGDF_DEFAULT);
-    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_WINDOW, video::SColor(0, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_FACE, video::SColor(100, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_SHADOW, video::SColor(180, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_DARK_SHADOW, video::SColor(180, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_HIGH_LIGHT, video::SColor(100, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_3D_LIGHT, video::SColor(120, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_EDITABLE, video::SColor(45, 0, 0, 0));
+    guienv->getSkin()->setColor(gui::EGUI_DEFAULT_COLOR::EGDC_FOCUSED_EDITABLE, video::SColor(25, 0, 0, 0));
 
     gui::IGUIStaticText* version = guienv->addStaticText(L"v0.0.1", core::rect<irr::s32>(0,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
     version->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
@@ -77,6 +83,7 @@ Menu::Menu(IrrlichtDevice* device){
     overlay->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     overlay->setDrawTitlebar(false);
     overlay->getCloseButton()->setVisible(false);
+    overlay->setDraggable(false);
 
     gui::IGUIEditBox* loginBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
     gui::IGUIEditBox* passwordBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
@@ -86,14 +93,16 @@ Menu::Menu(IrrlichtDevice* device){
     loginBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT));
     passwordBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT*2 + 5));
     passwordBox->setPasswordBox(true);
+    loginBox->setOverrideColor(video::SColor(255, 255, 255, 255));
+    passwordBox->setOverrideColor(video::SColor(255, 255, 255, 255));
 
-    gui::IGUIStaticText* loginText = guienv->addStaticText(L"Login", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), false, true, overlay);
+    gui::IGUIStaticText* loginText = guienv->addStaticText(L"Login", core::rect<irr::s32>(0, 0, 50, TEXTBOX_HEIGHT), false, true, overlay);
     loginText->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2 - loginText->getTextWidth() -5, TEXTBOX_HEIGHT));
     loginText->setTextAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_CENTER);
     loginText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     loginText->setOverrideColor(video::SColor(255, 255, 255, 255));
 
-    gui::IGUIStaticText* passwordText = guienv->addStaticText(L"Pass", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), false, true, overlay);
+    gui::IGUIStaticText* passwordText = guienv->addStaticText(L"Pass", core::rect<irr::s32>(0, 0, 50, TEXTBOX_HEIGHT), false, true, overlay);
     passwordText->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2 - passwordText->getTextWidth() -5, TEXTBOX_HEIGHT*2 + 5));
     passwordText->setTextAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_CENTER);
     passwordText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
