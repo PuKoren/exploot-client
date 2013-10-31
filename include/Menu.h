@@ -30,8 +30,10 @@ private:
     scene::ISceneManager* smgr;
 
     MyEventReceiver eventReceiver;
+    Network* net;
+    bool logginPending;
 public:
-    Menu(IrrlichtDevice* device);
+    Menu(IrrlichtDevice* device, Network* net);
     ~Menu();
     void update(u32 DeltaTime, GAME_STATE*);
     void drawAll();

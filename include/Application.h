@@ -1,6 +1,7 @@
 #include <irrlicht/irrlicht.h>
 #include "Bullet.h"
 #include "Menu.h"
+#include "Network.h"
 using namespace irr;
 
 class Application{
@@ -18,4 +19,5 @@ private:
     gui::IGUIEnvironment* guienv;
     Bullet* bullet;
     Menu* menu;
+    Network* net;
 };

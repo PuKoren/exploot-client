@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define UDP_PORT 8889
+#define UDP_PORT 8890
 #define SERVER_HOST "localhost"
 
 #define TEXTBOX_WIDTH 200

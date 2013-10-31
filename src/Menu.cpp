@@ -1,10 +1,12 @@
 #include "Menu.h"
 
-Menu::Menu(IrrlichtDevice* device){
+Menu::Menu(IrrlichtDevice* device, Network* netManager){
     smgr = device->getSceneManager();
     driver = device->getVideoDriver();
     device->getCursorControl()->setVisible(true);
     device->setEventReceiver(&eventReceiver);
+    net = netManager;
+    logginPending = false;
 
     if(!smgr || !driver)
         return;
@@ -143,11 +145,13 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
             connectInfo.set_passhash(converter.wchartToStr(passwordBox->getText()));
             msgData->set_data(connectInfo.SerializeAsString());
 
-            Network net;
-            if(net.Connect()){
-                net.Send((char*)msg.SerializeAsString().c_str());
+            if(net->Connect() && !logginPending){
+                logginPending = true;
+                net->Send((char*)msg.SerializeAsString().c_str());
+            }else if(logginPending){
+                //wait for loggin callback
             }else{
-                //server connect error !
+                //server is down or firewall issue
             }
             
         }else{
@@ -157,6 +161,14 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 
     if(eventReceiver.IsKeyDown(KEY_ESCAPE)){
         *gs = MENU_EXIT;
+    }
+
+    if(logginPending){
+        ENetEvent event;
+        if(net->Update(event) > 0){
+            //check callback info
+            logginPending = false;
+        }
     }
 }
 

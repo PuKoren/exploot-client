@@ -14,11 +14,14 @@ Application::Application(){
         //bullet manager
         bullet = new Bullet();
 
-        init();
+        //network manager
+        net = new Network();
 
+        init();
         state = MENU_MAIN;
     }else{
-      bullet = NULL;
+        bullet = NULL;
+        net = NULL;
     }
 }
 
@@ -28,6 +31,9 @@ Application::~Application(){
     }
     if(device){
         device->drop();
+    }
+    if(net){
+        delete net;
     }
 }
 
@@ -46,7 +52,7 @@ void Application::init(){
             "because of missing driver/hardware support.");
     }
 
-    menu = new Menu(device);
+    menu = new Menu(device, net);
 }
 
 bool Application::run(){

@@ -1,5 +1,5 @@
 #PROJECT NAME
-project(PukoWorld_Client)
+project(exploot-client)
 cmake_minimum_required(VERSION 2.8)
 
 #EXTERNAL PACKAGES (IRRLICHT)
