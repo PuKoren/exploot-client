@@ -1,0 +1,8 @@
+#######################
+# Visual Studio Files #
+#######################
+build/*
+exploot-client.opensdf
+exploot-client.sdf
+exploot-client.v11.suo
+visual-studio/tmp/*
