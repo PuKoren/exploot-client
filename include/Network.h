@@ -1,3 +1,6 @@
+#ifndef _NETWORK_H
+#define _NETWORK_H
+
 #include <enet/enet.h>
 #include <string.h>
 #include "config.h"
@@ -13,3 +16,5 @@ private:
     ENetHost* client;
     ENetPeer* peer;
 };
+
+#endif

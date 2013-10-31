@@ -134,9 +134,24 @@ Menu::~Menu(){
 void Menu::update(u32 DeltaTime, GAME_STATE* gs){
     if(eventReceiver.IsKeyDown(KEY_RETURN)){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
-            std::wcout << "Trying to log in user " << loginBox->getText() << std::endl;
-        }else{
+            Message msg;
+            Message::MessageData* msgData = msg.add_message();
+            msgData->set_type(Message_MessageType_CONNECT);
+            Connect connectInfo;
+            CConverter converter;
+            connectInfo.set_nickname(converter.wchartToStr(loginBox->getText()));
+            connectInfo.set_passhash(converter.wchartToStr(passwordBox->getText()));
+            msgData->set_data(connectInfo.SerializeAsString());
 
+            Network net;
+            if(net.Connect()){
+                net.Send((char*)msg.SerializeAsString().c_str());
+            }else{
+                //server connect error !
+            }
+            
+        }else{
+            //print message for user to check the input boxes content
         }
     }
 

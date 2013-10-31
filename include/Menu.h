@@ -3,8 +3,12 @@
 #include <irrlicht/irrlicht.h>
 #include "EventReceiver.h"
 #include "config.h"
+#include "CConverter.h"
 #include "CGUITTFont.h"
 #include "RealisticWaterSceneNode/RealisticWater.h"
+#include "Network.h"
+#include "exploot-protobuf/build/Message.pb.h"
+#include "exploot-protobuf/build/Connect.pb.h"
 using namespace irr;
 
 class Menu{
