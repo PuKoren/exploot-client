@@ -9,7 +9,7 @@ find_package(Bullet REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(ENet REQUIRED)
 find_package(Freetype REQUIRED)
-find_package (Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 #INCLUDES & SRC FILES
 include_directories(
