@@ -9,6 +9,7 @@ find_package(Bullet REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(ENet REQUIRED)
 find_package(Freetype REQUIRED)
+find_package (Threads REQUIRED)
 
 #INCLUDES & SRC FILES
 include_directories(
@@ -25,7 +26,9 @@ file(GLOB SRCS src/*.cpp)
 file(GLOB HDRS include/*.h)
 file(GLOB SUBSRCS submodules/RealisticWaterSceneNode/*.cpp)
 file(GLOB SUBHDRS submodules/RealisticWaterSceneNode/*.h)
+file(GLOB PROTOHDRS submodules/exploot-protobuf/build/*.h)
+file(GLOB PROTOSRCS submodules/exploot-protobuf/build/*.cc)
 
 #LINKING AND EXECUTABLE
-add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${SUBSRCS} ${SUBHDRS})
-target_link_libraries(${PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${BULLET_LIBRARIES} ${ENET_LIBRARIES} ${PROTOBUF_LIBRARY} ${FREETYPE_LIBRARIES})
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${SUBSRCS} ${SUBHDRS} ${PROTOSRCS} ${PROTOHDRS})
+target_link_libraries(${PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${BULLET_LIBRARIES} ${ENET_LIBRARIES} ${PROTOBUF_LIBRARIES} ${FREETYPE_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

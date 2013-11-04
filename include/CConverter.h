@@ -2,6 +2,7 @@
 #define CCONVERTER_H
 
 #include <string>
+#include <stdlib.h>
 
 class CConverter {
    
