@@ -3,6 +3,7 @@
 #include <irrlicht/irrlicht.h>
 #include "EventReceiver.h"
 #include "config.h"
+#include "md5.h"
 #include "CConverter.h"
 #include "CGUITTFont.h"
 #include "RealisticWaterSceneNode/RealisticWater.h"

@@ -3,6 +3,7 @@
 
 #define UDP_PORT 8890
 #define SERVER_HOST "localhost"
+#define MYSQL_HASH "exploot 0.0.1 client"
 
 #define TEXTBOX_WIDTH 200
 #define TEXTBOX_HEIGHT 30

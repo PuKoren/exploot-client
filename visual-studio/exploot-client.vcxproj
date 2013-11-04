@@ -88,6 +88,7 @@
     <ClCompile Include="..\src\CGUITTFont.cpp" />
     <ClCompile Include="..\src\EventReceiver.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\md5.cpp" />
     <ClCompile Include="..\src\Menu.cpp" />
     <ClCompile Include="..\src\Network.cpp" />
     <ClCompile Include="..\submodules\exploot-protobuf\build\Connect.pb.cc" />
@@ -101,6 +102,7 @@
     <ClInclude Include="..\include\config.h" />
     <ClInclude Include="..\include\EventReceiver.h" />
     <ClInclude Include="..\include\irrUString.h" />
+    <ClInclude Include="..\include\md5.h" />
     <ClInclude Include="..\include\Menu.h" />
     <ClInclude Include="..\include\Network.h" />
   </ItemGroup>

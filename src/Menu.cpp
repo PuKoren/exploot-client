@@ -142,7 +142,7 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
             Connect connectInfo;
             CConverter converter;
             connectInfo.set_nickname(converter.wchartToStr(loginBox->getText()));
-            connectInfo.set_passhash(converter.wchartToStr(passwordBox->getText()));
+            connectInfo.set_passhash(hash(converter.wchartToStr(passwordBox->getText()).c_str()));
             msgData->set_data(connectInfo.SerializeAsString());
 
             if(net->Connect() && !logginPending){
