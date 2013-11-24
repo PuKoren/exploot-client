@@ -2,17 +2,23 @@
 
 Network::Network(){
     connected = false;
+    peer = NULL;
     if (enet_initialize () == 0){
         client = enet_host_create (NULL /* create a client host */,
                     1 /* only allow 1 outgoing connection */,
                     2 /* allow up 2 channels to be used, 0 and 1 */,
                     250000 / 8 /* 56K modem with 56 Kbps downstream bandwidth */,
                     35000 / 8 /* 56K modem with 14 Kbps upstream bandwidth */);
+    }else{
+        client = NULL;
     }
+    challenge.clear();
 }
 
 Network::~Network(){
-    enet_peer_disconnect(peer, 0);
+    if(peer){
+        enet_peer_disconnect(peer, 0);
+    }
     enet_host_destroy(client);
     enet_deinitialize();
 }
@@ -27,7 +33,7 @@ bool Network::Connect(){
     enet_address_set_host (& address, SERVER_HOST);
     address.port = UDP_PORT;
 
-    peer = enet_host_connect (client, & address, 2, 0);
+    peer = enet_host_connect(client, & address, 2, 0);
     if (peer == NULL){
        return connected;
     }
@@ -48,5 +54,28 @@ void Network::Send(char* message){
 }
 
 int Network::Update(ENetEvent& event){
-    return enet_host_service(client, &event, 1);
+    int res = enet_host_service(client, &event, 1);
+    if(res >= 0)
+    {
+        if(event.type == ENET_EVENT_TYPE_RECEIVE){
+            if(challenge.size() == 0){
+                Message msg;
+                msg.ParseFromString((char*)event.packet->data);
+                if(msg.message().size() > 0){
+                    const Message_MessageData& msgData = msg.message().Get(0);
+                    if(msgData.type() == Message::CHALLENGE){
+                        this->challenge = msgData.data();
+                        std::cout << "Received challenge: " << this->challenge << std::endl;
+                    }
+                }
+                /* Clean up the packet now that we're done using it. */
+                enet_packet_destroy (event.packet);
+            }
+        }
+    }
+    return res;
+}
+
+std::string Network::getChallenge(){
+    return this->challenge;
 }

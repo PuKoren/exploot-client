@@ -136,20 +136,10 @@ Menu::~Menu(){
 void Menu::update(u32 DeltaTime, GAME_STATE* gs){
     if(eventReceiver.IsKeyDown(KEY_RETURN)){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
-            Message msg;
-            Message::MessageData* msgData = msg.add_message();
-            msgData->set_type(Message_MessageType_CONNECT);
-            Connect connectInfo;
-            CConverter converter;
-            connectInfo.set_nickname(converter.wchartToStr(loginBox->getText()));
-            connectInfo.set_passhash(hash(converter.wchartToStr(passwordBox->getText()).c_str()));
-            msgData->set_data(connectInfo.SerializeAsString());
-
             if(net->Connect() && !logginPending){
                 logginPending = true;
-                net->Send((char*)msg.SerializeAsString().c_str());
             }else if(logginPending){
-                //wait for loggin callback
+                //waiting for loggin callback
             }else{
                 //server is down or firewall issue
             }
@@ -167,7 +157,27 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
         ENetEvent event;
         if(net->Update(event) > 0){
             //check callback info
-            logginPending = false;
+            if(net->getChallenge().size() > 0){
+                Message msg;
+                Message::MessageData* msgData = msg.add_message();
+                msgData->set_type(Message_MessageType_CONNECT);
+                Connect connectInfo;
+                CConverter converter;
+
+                connectInfo.set_nickname(converter.wchartToStr(loginBox->getText()));
+
+                std::string hashedPass;
+                hashedPass.append(md5(converter.wchartToStr(passwordBox->getText())));
+                hashedPass.append(net->getChallenge());
+                connectInfo.set_passhash(md5(hashedPass.c_str()));
+
+                msgData->set_data(connectInfo.SerializeAsString());
+                net->Send((char*)msg.SerializeAsString().c_str());
+                std::cout << "Sending credentials..." << std::endl;
+            }else{
+                net->Connect();
+            }
+            this->logginPending = false;
         }
     }
 }
