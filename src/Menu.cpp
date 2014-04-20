@@ -75,6 +75,11 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     version->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
     version->setTextAlignment(gui::EGUIA_LOWERRIGHT, gui::EGUIA_LOWERRIGHT);
     version->setOverrideColor(video::SColor(255, 255, 255, 255));
+	
+	ping = guienv->addStaticText(L"0", core::rect<irr::s32>(5,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
+    ping->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
+    ping->setTextAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
+    ping->setOverrideColor(video::SColor(255, 255, 255, 255));
 
     gui::IGUIStaticText* title = guienv->addStaticText(L"EXPLOOT", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true);
     title->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
@@ -148,7 +153,7 @@ void Menu::sendCredentials(){
 	connectInfo.set_passhash(md5(hashedPass.c_str()));
 
 	msgData->set_data(connectInfo.SerializeAsString());
-	net->Send((char*)msg.SerializeAsString().c_str());
+	net->Send(msg);
 	std::cout << "Sending credentials..." << std::endl;
 	login_step = LoginSteps::CREDENTIALS;
 }
@@ -159,7 +164,7 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 			if(net->Connect() && login_step == LoginSteps::NONE){
 				login_step = LoginSteps::CHALLENGE;
             }else if(login_step == LoginSteps::DONE){
-                //waiting for loggin callback
+                //user is logged in
 			}else if(!net->Connect()){
                 //server is down or firewall issue
             }
@@ -178,25 +183,34 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 		std::string data;
         if(net->Update(event, type, data) > 0){
             //as soon as challenge is received from server
-			if(net->getChallenge().size() > 0){
+			if(!net->getChallenge().empty()){
 				if(type == Message::LOGIN_CALLBACK){
 					ConnectCallback cb;
 					cb.ParseFromString(data);
 					if(cb.succeed()){
-						//user successfully logged in
 						std::cout << "User logged in." << std::endl;
+						login_step = LoginSteps::DONE;
 					}else{
 						//login failed
 						std::cout << "Login failed !" << std::endl;
+						login_step = LoginSteps::NONE;
 					}
-					login_step = LoginSteps::DONE;
+					
+					//login_step = LoginSteps::DONE;
 				}else if(type == Message::CHALLENGE){
 					sendCredentials();
 				}
 			}
+			enet_packet_destroy(event.packet);
 		}
-		enet_packet_destroy(event.packet);
+
     }
+	
+	CConverter converter;
+	char str[5];
+	sprintf(str, "%d", net->getPing());
+	ping->setText(converter.strToWchart(str));
+	
 }
 
 void Menu::drawAll(){

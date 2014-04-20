@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <stdio.h>
 #include <irrlicht/irrlicht.h>
 #include "EventReceiver.h"
 #include "config.h"
@@ -36,6 +37,7 @@ private:
 
     gui::IGUIEditBox*  loginBox;
     gui::IGUIEditBox*  passwordBox;
+	gui::IGUIStaticText* ping;
 
     video::IVideoDriver* driver;
     scene::ISceneManager* smgr;

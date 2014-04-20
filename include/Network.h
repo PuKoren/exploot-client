@@ -4,7 +4,6 @@
 #include <iostream>
 #include <enet/enet.h>
 #include <string.h>
-#include <sstream>
 #include "exploot-protobuf/build/Message.pb.h"
 #include "config.h"
 
@@ -13,14 +12,16 @@ public:
     Network();
     ~Network();
     bool Connect();
-    void Send(char* message);
+    void Send(Message& message);
     int Update(ENetEvent& event, Message::MessageType&, std::string&);
     std::string getChallenge();
+	int getPing();
 private:
     ENetHost* client;
     ENetPeer* peer;
     std::string challenge;
     bool connected;
+	int ping;
 };
 
 #endif

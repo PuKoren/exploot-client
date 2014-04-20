@@ -13,6 +13,7 @@ Network::Network(){
         client = NULL;
     }
     challenge.clear();
+	ping = 0;
 }
 
 Network::~Network(){
@@ -46,10 +47,16 @@ bool Network::Connect(){
     return connected;
 }
 
-void Network::Send(char* message){
-    ENetPacket * packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+void Network::Send(Message& message){
+	void* data = malloc(message.ByteSize());
+	int size = message.ByteSize();
+	message.SerializeToArray(data, size);
+	
+    ENetPacket * packet = enet_packet_create(data, size, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send (peer, 0, packet);
-    enet_host_flush(client);
+    //enet_host_flush(client);
+	
+	free(data);
 }
 
 int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& data){
@@ -69,8 +76,13 @@ int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& d
 				this->challenge = data;
 			}
         }
+		
     }
     return res;
+}
+
+int Network::getPing(){
+	return ping;	
 }
 
 std::string Network::getChallenge(){
