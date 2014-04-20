@@ -58,7 +58,7 @@ int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& d
     {
         if(event.type == ENET_EVENT_TYPE_RECEIVE){
             Message msg;
-            msg.ParseFromString((char*)event.packet->data);
+            msg.ParseFromArray(event.packet->data, event.packet->dataLength);
             if(msg.message().size() > 0){
 				const Message_MessageData& msgData = msg.message().Get(0);
 				type = msgData.type();
@@ -67,10 +67,7 @@ int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& d
 
 			if(type == Message::CHALLENGE){
 				this->challenge = data;
-				std::cout << "Received challenge: " << this->challenge << std::endl;
 			}
-
-			std::cout << "Received packet: " << type << " with data: " << data << std::endl;
         }
     }
     return res;

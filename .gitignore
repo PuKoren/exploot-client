@@ -8,4 +8,4 @@ exploot-client.v11.suo
 visual-studio/tmp/*
 
 #CMakeFiles
-CMakeLists.txt.user
+CMakeLists.txt.user*

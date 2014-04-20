@@ -12,7 +12,7 @@ Application::Application(){
         smgr->setShadowColor(video::SColor(150,0,0,0));
 
         //bullet manager
-        bullet = new Bullet();
+        bullet = NULL;//new Bullet();
 
         //network manager
         net = new Network();
@@ -66,7 +66,7 @@ bool Application::run(){
     while(device->run()){
         DeltaTime = irrTimer->getTime() - TimeStamp;
         TimeStamp = irrTimer->getTime();
-        bullet->UpdatePhysics(DeltaTime);
+        //bullet->UpdatePhysics(DeltaTime);
 
         switch(state){
             case MENU_MAIN:

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <enet/enet.h>
 #include <string.h>
+#include <sstream>
 #include "exploot-protobuf/build/Message.pb.h"
 #include "config.h"
 

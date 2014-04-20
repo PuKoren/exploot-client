@@ -181,7 +181,8 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 			if(net->getChallenge().size() > 0){
 				if(type == Message::LOGIN_CALLBACK){
 					ConnectCallback cb;
-					if(cb.ParseFromString(data)){
+					cb.ParseFromString(data);
+					if(cb.succeed()){
 						//user successfully logged in
 						std::cout << "User logged in." << std::endl;
 					}else{
