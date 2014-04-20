@@ -69,6 +69,8 @@ int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& d
 				this->challenge = data;
 				std::cout << "Received challenge: " << this->challenge << std::endl;
 			}
+
+			std::cout << "Received packet: " << type << " with data: " << data << std::endl;
         }
     }
     return res;
