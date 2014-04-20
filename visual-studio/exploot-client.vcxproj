@@ -55,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include\;include;..\submodules\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\;include;..\submodules\;include\irrlicht</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -63,6 +63,9 @@
       <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>libprotobuf.lib;freetype250.lib;ws2_32.lib;winmm.lib;enet.lib;Irrlicht.lib;BulletCollision.lib;BulletDynamics.lib;BulletSoftBody.lib;LinearMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy bin\*.dll ..\build</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -91,6 +94,7 @@
     <ClCompile Include="..\src\md5.cpp" />
     <ClCompile Include="..\src\Menu.cpp" />
     <ClCompile Include="..\src\Network.cpp" />
+    <ClCompile Include="..\submodules\exploot-protobuf\build\Connect.callback.pb.cc" />
     <ClCompile Include="..\submodules\exploot-protobuf\build\Connect.pb.cc" />
     <ClCompile Include="..\submodules\exploot-protobuf\build\Message.pb.cc" />
     <ClCompile Include="..\submodules\RealisticWaterSceneNode\RealisticWater.cpp" />
@@ -105,6 +109,14 @@
     <ClInclude Include="..\include\md5.h" />
     <ClInclude Include="..\include\Menu.h" />
     <ClInclude Include="..\include\Network.h" />
+    <ClInclude Include="..\submodules\exploot-protobuf\build\Connect.callback.pb.h" />
+    <ClInclude Include="..\submodules\exploot-protobuf\build\Connect.pb.h" />
+    <ClInclude Include="..\submodules\exploot-protobuf\build\Message.pb.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\submodules\exploot-protobuf\Connect.callback.proto" />
+    <None Include="..\submodules\exploot-protobuf\Connect.proto" />
+    <None Include="..\submodules\exploot-protobuf\Message.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

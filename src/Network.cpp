@@ -24,9 +24,8 @@ Network::~Network(){
 }
 
 bool Network::Connect(){
-    if(connected){
-        return connected;
-    }
+    if(connected) return true;
+
     ENetAddress address;
     ENetEvent event;
 
@@ -68,8 +67,6 @@ int Network::Update(ENetEvent& event){
                         std::cout << "Received challenge: " << this->challenge << std::endl;
                     }
                 }
-                /* Clean up the packet now that we're done using it. */
-                enet_packet_destroy (event.packet);
             }
         }
     }

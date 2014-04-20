@@ -6,7 +6,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     device->getCursorControl()->setVisible(true);
     device->setEventReceiver(&eventReceiver);
     net = netManager;
-    logginPending = false;
+	login_step = LoginSteps::NONE;
 
     if(!smgr || !driver)
         return;
@@ -133,17 +133,36 @@ Menu::~Menu(){
     smgr->clear();
 }
 
+void Menu::sendCredentials(){
+	Message msg;
+	Message::MessageData* msgData = msg.add_message();
+	msgData->set_type(Message_MessageType_CONNECT);
+	Connect connectInfo;
+	CConverter converter;
+
+	connectInfo.set_nickname(converter.wchartToStr(loginBox->getText()));
+
+	std::string hashedPass;
+	hashedPass.append(md5(converter.wchartToStr(passwordBox->getText())));
+	hashedPass.append(net->getChallenge());
+	connectInfo.set_passhash(md5(hashedPass.c_str()));
+
+	msgData->set_data(connectInfo.SerializeAsString());
+	net->Send((char*)msg.SerializeAsString().c_str());
+	std::cout << "Sending credentials..." << std::endl;
+	login_step = LoginSteps::CREDENTIALS;
+}
+
 void Menu::update(u32 DeltaTime, GAME_STATE* gs){
     if(eventReceiver.IsKeyDown(KEY_RETURN)){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
-            if(net->Connect() && !logginPending){
-                logginPending = true;
-            }else if(logginPending){
+			if(net->Connect() && login_step == LoginSteps::NONE){
+				login_step = LoginSteps::CHALLENGE;
+            }else if(login_step == LoginSteps::DONE){
                 //waiting for loggin callback
-            }else{
+			}else if(!net->Connect()){
                 //server is down or firewall issue
             }
-            
         }else{
             //print message for user to check the input boxes content
         }
@@ -153,32 +172,33 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
         *gs = MENU_EXIT;
     }
 
-    if(logginPending){
-        ENetEvent event;
+	if(login_step == LoginSteps::CHALLENGE || login_step == LoginSteps::CREDENTIALS){
+		ENetEvent event;
         if(net->Update(event) > 0){
-            //check callback info
-            if(net->getChallenge().size() > 0){
-                Message msg;
-                Message::MessageData* msgData = msg.add_message();
-                msgData->set_type(Message_MessageType_CONNECT);
-                Connect connectInfo;
-                CConverter converter;
-
-                connectInfo.set_nickname(converter.wchartToStr(loginBox->getText()));
-
-                std::string hashedPass;
-                hashedPass.append(md5(converter.wchartToStr(passwordBox->getText())));
-                hashedPass.append(net->getChallenge());
-                connectInfo.set_passhash(md5(hashedPass.c_str()));
-
-                msgData->set_data(connectInfo.SerializeAsString());
-                net->Send((char*)msg.SerializeAsString().c_str());
-                std::cout << "Sending credentials..." << std::endl;
-            }else{
-                net->Connect();
-            }
-            this->logginPending = false;
-        }
+            //as soon as challenge is received from server
+			if(net->getChallenge().size() > 0){
+				Message msg;
+				msg.ParseFromString((char*)event.packet->data);
+				//if a message is received from server, proccess it
+				if(msg.message().size() > 0){
+					const Message_MessageData& msgData = msg.message().Get(0);
+					if(msgData.type() == Message::LOGIN_CALLBACK){
+						ConnectCallback cb;
+						if(cb.ParseFromString(msgData.data())){
+							//user successfully logged in
+							std::cout << "User logged in." << std::endl;
+						}else{
+							//login failed
+							std::cout << "Login failed !" << std::endl;
+						}
+						login_step = LoginSteps::DONE;
+					}else if(msgData.type() == Message::CHALLENGE){
+						sendCredentials();
+					}
+				}
+			}
+		}
+		enet_packet_destroy(event.packet);
     }
 }
 

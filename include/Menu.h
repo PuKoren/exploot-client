@@ -10,7 +10,17 @@
 #include "Network.h"
 #include "exploot-protobuf/build/Message.pb.h"
 #include "exploot-protobuf/build/Connect.pb.h"
+#include "exploot-protobuf/build/Connect.callback.pb.h"
 using namespace irr;
+
+namespace LoginSteps{
+	enum Steps{
+		NONE,
+		CHALLENGE,
+		CREDENTIALS,
+		DONE
+	};
+}
 
 class Menu{
 private:
@@ -32,10 +42,11 @@ private:
 
     MyEventReceiver eventReceiver;
     Network* net;
-    bool logginPending;
+    LoginSteps::Steps login_step;
 public:
     Menu(IrrlichtDevice* device, Network* net);
     ~Menu();
+	void sendCredentials();
     void update(u32 DeltaTime, GAME_STATE*);
     void drawAll();
 };
