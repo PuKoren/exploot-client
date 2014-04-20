@@ -174,27 +174,23 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 
 	if(login_step == LoginSteps::CHALLENGE || login_step == LoginSteps::CREDENTIALS){
 		ENetEvent event;
-        if(net->Update(event) > 0){
+		Message_MessageType type;
+		std::string data;
+        if(net->Update(event, type, data) > 0){
             //as soon as challenge is received from server
 			if(net->getChallenge().size() > 0){
-				Message msg;
-				msg.ParseFromString((char*)event.packet->data);
-				//if a message is received from server, proccess it
-				if(msg.message().size() > 0){
-					const Message_MessageData& msgData = msg.message().Get(0);
-					if(msgData.type() == Message::LOGIN_CALLBACK){
-						ConnectCallback cb;
-						if(cb.ParseFromString(msgData.data())){
-							//user successfully logged in
-							std::cout << "User logged in." << std::endl;
-						}else{
-							//login failed
-							std::cout << "Login failed !" << std::endl;
-						}
-						login_step = LoginSteps::DONE;
-					}else if(msgData.type() == Message::CHALLENGE){
-						sendCredentials();
+				if(type == Message::LOGIN_CALLBACK){
+					ConnectCallback cb;
+					if(cb.ParseFromString(data)){
+						//user successfully logged in
+						std::cout << "User logged in." << std::endl;
+					}else{
+						//login failed
+						std::cout << "Login failed !" << std::endl;
 					}
+					login_step = LoginSteps::DONE;
+				}else if(type == Message::CHALLENGE){
+					sendCredentials();
 				}
 			}
 		}

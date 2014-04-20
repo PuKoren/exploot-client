@@ -13,7 +13,7 @@ public:
     ~Network();
     bool Connect();
     void Send(char* message);
-    int Update(ENetEvent& event);
+    int Update(ENetEvent& event, Message::MessageType&, std::string&);
     std::string getChallenge();
 private:
     ENetHost* client;

@@ -52,22 +52,23 @@ void Network::Send(char* message){
     enet_host_flush(client);
 }
 
-int Network::Update(ENetEvent& event){
+int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& data){
     int res = enet_host_service(client, &event, 1);
     if(res >= 0)
     {
         if(event.type == ENET_EVENT_TYPE_RECEIVE){
-            if(challenge.size() == 0){
-                Message msg;
-                msg.ParseFromString((char*)event.packet->data);
-                if(msg.message().size() > 0){
-                    const Message_MessageData& msgData = msg.message().Get(0);
-                    if(msgData.type() == Message::CHALLENGE){
-                        this->challenge = msgData.data();
-                        std::cout << "Received challenge: " << this->challenge << std::endl;
-                    }
-                }
+            Message msg;
+            msg.ParseFromString((char*)event.packet->data);
+            if(msg.message().size() > 0){
+				const Message_MessageData& msgData = msg.message().Get(0);
+				type = msgData.type();
+				data = msgData.data();
             }
+
+			if(type == Message::CHALLENGE){
+				this->challenge = data;
+				std::cout << "Received challenge: " << this->challenge << std::endl;
+			}
         }
     }
     return res;
