@@ -182,34 +182,37 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 		Message_MessageType type;
 		std::string data;
         if(net->Update(event, type, data) > 0){
-            //as soon as challenge is received from server
-			if(!net->getChallenge().empty()){
-				if(type == Message::LOGIN_CALLBACK){
-					ConnectCallback cb;
-					cb.ParseFromString(data);
-					if(cb.succeed()){
-						std::cout << "User logged in." << std::endl;
-						login_step = LoginSteps::DONE;
-					}else{
-						//login failed
-						std::cout << "Login failed !" << std::endl;
-						login_step = LoginSteps::NONE;
-					}
-					
-					//login_step = LoginSteps::DONE;
-				}else if(type == Message::CHALLENGE){
-					sendCredentials();
+			if(type == Message::LOGIN_CALLBACK){
+				ConnectCallback cb;
+				cb.ParseFromString(data);
+				if(cb.succeed()){
+					std::cout << "User logged in." << std::endl;
+					login_step = LoginSteps::DONE;
+				}else{
+					//login failed
+					std::cout << "Login failed !" << std::endl;
+					login_step = LoginSteps::NONE;
 				}
+				//login_step = LoginSteps::DONE;
 			}
 			enet_packet_destroy(event.packet);
 		}
 
+		//as soon as challenge is received from server
+		if(!net->getChallenge().empty()){
+			if(login_step == LoginSteps::CHALLENGE){
+				sendCredentials();
+			}
+		}
     }
 	
-	CConverter converter;
-	char str[5];
-	sprintf(str, "%d", net->getPing());
-	ping->setText(converter.strToWchart(str));
+	if(prevPing != net->getPing()){
+		CConverter converter;
+		char str[5];
+		sprintf(str, "%d", net->getPing());
+		ping->setText(converter.strToWchart(str));
+		prevPing = net->getPing();
+	}
 	
 }
 

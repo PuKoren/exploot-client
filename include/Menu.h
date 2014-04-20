@@ -38,6 +38,7 @@ private:
     gui::IGUIEditBox*  loginBox;
     gui::IGUIEditBox*  passwordBox;
 	gui::IGUIStaticText* ping;
+	int prevPing;
 
     video::IVideoDriver* driver;
     scene::ISceneManager* smgr;

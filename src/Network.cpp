@@ -44,6 +44,7 @@ bool Network::Connect(){
     }else{
         std::cout << "Connection failure." << std::endl;
     }
+
     return connected;
 }
 
@@ -76,7 +77,8 @@ int Network::Update(ENetEvent& event, Message::MessageType& type, std::string& d
 				this->challenge = data;
 			}
         }
-		
+
+		ping = peer->roundTripTime;
     }
     return res;
 }
