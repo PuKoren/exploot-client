@@ -58,11 +58,6 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
 	guienv = device->getGUIEnvironment();
     title_font = gui::CGUITTFont::createTTFont(guienv, "../resources/fonts/BEBAS.ttf", 78);
 
-    gui::IGUIStaticText* version = guienv->addStaticText(L"v0.0.1", core::rect<irr::s32>(0,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
-    version->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
-    version->setTextAlignment(gui::EGUIA_LOWERRIGHT, gui::EGUIA_LOWERRIGHT);
-    version->setOverrideColor(video::SColor(255, 255, 255, 255));
-
     gui::IGUIStaticText* title = guienv->addStaticText(L"EXPLOOT", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true);
     title->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
     title->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
@@ -116,7 +111,6 @@ Menu::~Menu(){
     title_font->drop();
 	
     //clear scene
-	delete water;
 	smgr->clear();
 }
 
