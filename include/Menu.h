@@ -29,6 +29,7 @@ private:
 
     gui::IGUIEditBox*  loginBox;
     gui::IGUIEditBox*  passwordBox;
+	gui::IGUIStaticText* errorText;
 
 	scene::ISceneManager* smgr;
 	irr::IrrlichtDevice* device;

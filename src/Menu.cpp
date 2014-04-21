@@ -93,6 +93,12 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     passwordText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     passwordText->setOverrideColor(video::SColor(255, 255, 255, 255));
 
+	errorText = guienv->addStaticText(L"", core::rect<irr::s32>(0, 0, LOGIN_WIDTH, 25), false, true, overlay);
+    errorText->setRelativePosition(core::position2di(0, LOGIN_HEIGHT - errorText->getTextHeight()*2 - 10));
+    errorText->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
+    errorText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
+    errorText->setOverrideColor(video::SColor(255, 155, 10, 10));
+
     gui::IGUIStaticText* noticeText = guienv->addStaticText(L"Press \"Enter\" to log in or \"Escape\" to quit.", core::rect<irr::s32>(0, 0, LOGIN_WIDTH, 25), false, true, overlay);
     noticeText->setRelativePosition(core::position2di(0, LOGIN_HEIGHT - noticeText->getTextHeight() - 10));
     noticeText->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
@@ -111,6 +117,7 @@ Menu::~Menu(){
     title_font->drop();
 	
     //clear scene
+	//delete water;
 	smgr->clear();
 }
 
@@ -139,11 +146,17 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
 			if(net->Connect() && login_step == LoginSteps::NONE){
 				login_step = LoginSteps::CHALLENGE;
+				errorText->setText(L"");
             }else if(!net->Connect()){
                 //server is down or firewall issue
+				std::cout << "Server down or firewall issue." << std::endl;
+				errorText->setText(L"Server may be down or your firewall is blocking.");
+				login_step = LoginSteps::NONE;
             }
         }else{
             //print message for user to check the input boxes content
+			std::cout << "Bad input." << std::endl;
+			errorText->setText(L"Please check your input.");
         }
     }
 
@@ -166,6 +179,7 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
 				}else{
 					//login failed
 					std::cout << "Login failed !" << std::endl;
+					errorText->setText(L"Bad password for this nickname.");
 					login_step = LoginSteps::NONE;
 				}
 			}
