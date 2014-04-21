@@ -1,5 +1,9 @@
 #include "EventReceiver.h"
 
+MyEventReceiver::~MyEventReceiver(){
+
+}
+
 bool MyEventReceiver::OnEvent(const SEvent& event)
 {
     // Remember whether each key is down or up

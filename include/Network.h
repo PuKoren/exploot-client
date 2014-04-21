@@ -11,17 +11,21 @@ class Network{
 public:
     Network();
     ~Network();
+
+	int getPing();
     bool Connect();
+	std::string getChallenge();
+
     void Send(Message& message);
     int Update(ENetEvent& event, Message::MessageType&, std::string&);
-    std::string getChallenge();
-	int getPing();
 private:
-    ENetHost* client;
-    ENetPeer* peer;
-    std::string challenge;
-    bool connected;
 	int ping;
+	bool connected;
+
+	ENetPeer* peer;
+    ENetHost* client;
+
+    std::string challenge;
 };
 
 #endif

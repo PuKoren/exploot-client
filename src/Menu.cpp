@@ -1,17 +1,17 @@
 #include "Menu.h"
+using namespace irr;
 
 Menu::Menu(IrrlichtDevice* device, Network* netManager){
-    smgr = device->getSceneManager();
-    driver = device->getVideoDriver();
-    device->getCursorControl()->setVisible(true);
-    device->setEventReceiver(&eventReceiver);
-    net = netManager;
-	login_step = LoginSteps::NONE;
+	this->device = device;
+    this->smgr = device->getSceneManager();
+    this->driver = device->getVideoDriver();
+    this->device->getCursorControl()->setVisible(true);
+    this->net = netManager;
+	this->login_step = LoginSteps::NONE;
 
-    if(!smgr || !driver)
-        return;
+    if(!smgr || !driver) return;
     
-    terrain = smgr->addTerrainSceneNode(
+	scene::ITerrainSceneNode* terrain = smgr->addTerrainSceneNode(
                 "../resources/terrain/heightmap.jpg",
                 0,                  // parent node
                 -1,                 // node id
@@ -22,7 +22,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
                 4,                  // maxLOD
                 scene::ETPS_9,             // patchSize
                 4                   // smoothFactor
-                );
+				);
 
     terrain->setMaterialFlag(video::EMF_LIGHTING, false);
     terrain->setMaterialTexture(0, driver->getTexture("../resources/terrain/texture.jpg"));
@@ -30,7 +30,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
     terrain->scaleTexture(1.0f, 20.0f);
 
-    skybox = smgr->addSkyBoxSceneNode(
+	scene::ISceneNode* skybox = smgr->addSkyBoxSceneNode(
         driver->getTexture("../resources/skyboxes/bluesky/top.jpg"),
         NULL,
         driver->getTexture("../resources/skyboxes/bluesky/left.jpg"),
@@ -46,8 +46,8 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     water->setWaterColor(video::SColorf(1, 1, 1, 0.f));
     water->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 
-    scene::IAnimatedMesh* mesh = smgr->getMesh("../resources/models/trees/tree4-fbx.obj");
-    tree = smgr->addAnimatedMeshSceneNode(mesh);
+	scene::IAnimatedMesh* mesh = smgr->getMesh("../resources/models/trees/tree4-fbx.obj");
+	scene::IAnimatedMeshSceneNode* tree = smgr->addAnimatedMeshSceneNode(mesh);
     if(tree){
         tree->setScale(core::vector3df(30.f, 30.f, 30.f));
         tree->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -55,31 +55,13 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
         tree->setPosition(core::vector3df(2160, 20, 700));
     }
 
-    title_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), 
-        "../resources/fonts/BEBAS.ttf", 78);
-    default_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), 
-        "../resources/fonts/Cicle_Gordita.ttf", 16);
-
-    guienv = device->getGUIEnvironment();
-    guienv->getSkin()->setFont(default_font, gui::EGDF_DEFAULT);
-    guienv->getSkin()->setColor(gui::EGDC_3D_FACE, video::SColor(100, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_3D_SHADOW, video::SColor(180, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_3D_DARK_SHADOW, video::SColor(180, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_3D_HIGH_LIGHT, video::SColor(100, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_3D_LIGHT, video::SColor(120, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_EDITABLE, video::SColor(45, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_FOCUSED_EDITABLE, video::SColor(25, 0, 0, 0));
-    guienv->getSkin()->setColor(gui::EGDC_BUTTON_TEXT, video::SColor(255, 255, 255, 255));
+	guienv = device->getGUIEnvironment();
+    title_font = gui::CGUITTFont::createTTFont(guienv, "../resources/fonts/BEBAS.ttf", 78);
 
     gui::IGUIStaticText* version = guienv->addStaticText(L"v0.0.1", core::rect<irr::s32>(0,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
     version->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
     version->setTextAlignment(gui::EGUIA_LOWERRIGHT, gui::EGUIA_LOWERRIGHT);
     version->setOverrideColor(video::SColor(255, 255, 255, 255));
-	
-	ping = guienv->addStaticText(L"0", core::rect<irr::s32>(5,0, driver->getScreenSize().Width-5, driver->getScreenSize().Height), false, true);
-    ping->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
-    ping->setTextAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
-    ping->setOverrideColor(video::SColor(255, 255, 255, 255));
 
     gui::IGUIStaticText* title = guienv->addStaticText(L"EXPLOOT", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true);
     title->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
@@ -122,7 +104,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     noticeText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     noticeText->setOverrideColor(video::SColor(255, 255, 255, 255));
 
-    camera = smgr->addCameraSceneNode();
+    scene::ICameraSceneNode* camera = smgr->addCameraSceneNode();
     camera->setPosition(core::vector3df(1950, 340, 2100));
     camera->setTarget(core::vector3df(166, 410, -166));
     camera->setFarValue(8000.f);
@@ -130,12 +112,12 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
 
 Menu::~Menu(){
     //clear gui env
-    guienv->clear();
+	guienv->clear();
     title_font->drop();
-    default_font->drop();
-
+	
     //clear scene
-    smgr->clear();
+	delete water;
+	smgr->clear();
 }
 
 void Menu::sendCredentials(){
@@ -158,14 +140,12 @@ void Menu::sendCredentials(){
 	login_step = LoginSteps::CREDENTIALS;
 }
 
-void Menu::update(u32 DeltaTime, GAME_STATE* gs){
-    if(eventReceiver.IsKeyDown(KEY_RETURN)){
+void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
+	if(((MyEventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_RETURN)){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
 			if(net->Connect() && login_step == LoginSteps::NONE){
 				login_step = LoginSteps::CHALLENGE;
-            }else if(login_step == LoginSteps::DONE){
-                //user is logged in
-			}else if(!net->Connect()){
+            }else if(!net->Connect()){
                 //server is down or firewall issue
             }
         }else{
@@ -173,8 +153,8 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
         }
     }
 
-    if(eventReceiver.IsKeyDown(KEY_ESCAPE)){
-        *gs = MENU_EXIT;
+    if(((MyEventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_ESCAPE)){
+        gs = GameStates::EXIT;
     }
 
 	if(login_step == LoginSteps::CHALLENGE || login_step == LoginSteps::CREDENTIALS){
@@ -188,12 +168,12 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 				if(cb.succeed()){
 					std::cout << "User logged in." << std::endl;
 					login_step = LoginSteps::DONE;
+					gs = GameStates::CHARACTER_SELECT;
 				}else{
 					//login failed
 					std::cout << "Login failed !" << std::endl;
 					login_step = LoginSteps::NONE;
 				}
-				//login_step = LoginSteps::DONE;
 			}
 			enet_packet_destroy(event.packet);
 		}
@@ -205,17 +185,8 @@ void Menu::update(u32 DeltaTime, GAME_STATE* gs){
 			}
 		}
     }
-	
-	if(prevPing != net->getPing()){
-		CConverter converter;
-		char str[5];
-		sprintf(str, "%d", net->getPing());
-		ping->setText(converter.strToWchart(str));
-		prevPing = net->getPing();
-	}
-	
 }
 
 void Menu::drawAll(){
-    guienv->drawAll();
+    
 }

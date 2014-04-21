@@ -10,12 +10,13 @@
 #define LOGIN_HEIGHT 140
 #define LOGIN_WIDTH 350
 
-enum GAME_STATE{
-    MENU_MAIN,
-    MENU_LOGIN,
-    MENU_EXIT,
-    INGAME_PLAY,
-    INGAME_EXIT
-};
+namespace GameStates{
+	enum GAME_STATE{
+		MENU,
+		CHARACTER_SELECT,
+		INGAME,
+		EXIT
+	};
+}
 
 #endif

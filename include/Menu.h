@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <irrlicht/irrlicht.h>
+#include "IGameObject.h"
 #include "EventReceiver.h"
 #include "config.h"
 #include "md5.h"
@@ -12,7 +13,6 @@
 #include "exploot-protobuf/build/Message.pb.h"
 #include "exploot-protobuf/build/Connect.pb.h"
 #include "exploot-protobuf/build/Connect.callback.pb.h"
-using namespace irr;
 
 namespace LoginSteps{
 	enum Steps{
@@ -23,33 +23,28 @@ namespace LoginSteps{
 	};
 }
 
-class Menu{
+class Menu: public IGameObject{
 private:
-    scene::ICameraSceneNode* camera;
-    scene::ITerrainSceneNode* terrain;
-    scene::ISceneNode* skybox;
-    RealisticWaterSceneNode* water;
-    scene::IAnimatedMeshSceneNode* tree;
-
-    gui::IGUIEnvironment* guienv;
-    gui::CGUITTFont* title_font;
-    gui::CGUITTFont* default_font;
+	LoginSteps::Steps login_step;
 
     gui::IGUIEditBox*  loginBox;
     gui::IGUIEditBox*  passwordBox;
-	gui::IGUIStaticText* ping;
-	int prevPing;
 
+	scene::ISceneManager* smgr;
+	irr::IrrlichtDevice* device;
     video::IVideoDriver* driver;
-    scene::ISceneManager* smgr;
+	gui::CGUITTFont* title_font;
+	gui::IGUIEnvironment* guienv;
+	
+	RealisticWaterSceneNode* water;
 
-    MyEventReceiver eventReceiver;
     Network* net;
-    LoginSteps::Steps login_step;
+    
+	void sendCredentials();
+
 public:
     Menu(IrrlichtDevice* device, Network* net);
     ~Menu();
-	void sendCredentials();
-    void update(u32 DeltaTime, GAME_STATE*);
-    void drawAll();
+    virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE&);
+    virtual void drawAll();
 };

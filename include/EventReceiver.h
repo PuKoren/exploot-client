@@ -11,6 +11,7 @@ public:
     virtual bool IsKeyDown(EKEY_CODE keyCode) const;
 
     MyEventReceiver();
+	~MyEventReceiver();
 
 private:
     // We use this array to store the current state of each key

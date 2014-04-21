@@ -1,8 +1,8 @@
 #include <irrlicht/irrlicht.h>
+#include "IGameObject.h"
 #include "Bullet.h"
 #include "Menu.h"
 #include "Network.h"
-using namespace irr;
 
 class Application{
 public:
@@ -11,13 +11,22 @@ public:
     bool run();
 
 private:
-    GAME_STATE state;
-    void init();
-    IrrlichtDevice *device;
+	void loadLevel();
+	GameStates::GAME_STATE state;
+	GameStates::GAME_STATE oldState;
+
+    irr::IrrlichtDevice *device;
     scene::ISceneManager *smgr;
     video::IVideoDriver* driver;
-    gui::IGUIEnvironment* guienv;
+	gui::CGUITTFont* default_font;
+	MyEventReceiver eventReceiver;
+
     Bullet* bullet;
-    Menu* menu;
+	IGameObject* scene;
     Network* net;
+	
+	void updateTitle();
+	int lastFPS;
+
+	void debug();
 };

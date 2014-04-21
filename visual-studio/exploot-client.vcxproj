@@ -89,6 +89,7 @@
     <ClCompile Include="..\src\Bullet.cpp" />
     <ClCompile Include="..\src\CConverter.cpp" />
     <ClCompile Include="..\src\CGUITTFont.cpp" />
+    <ClCompile Include="..\src\CharacterScreen.cpp" />
     <ClCompile Include="..\src\EventReceiver.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\md5.cpp" />
@@ -103,8 +104,10 @@
     <ClInclude Include="..\include\Application.h" />
     <ClInclude Include="..\include\Bullet.h" />
     <ClInclude Include="..\include\CConverter.h" />
+    <ClInclude Include="..\include\CharacterScreen.h" />
     <ClInclude Include="..\include\config.h" />
     <ClInclude Include="..\include\EventReceiver.h" />
+    <ClInclude Include="..\include\IGameObject.h" />
     <ClInclude Include="..\include\irrUString.h" />
     <ClInclude Include="..\include\md5.h" />
     <ClInclude Include="..\include\Menu.h" />

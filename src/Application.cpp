@@ -1,105 +1,120 @@
 #include "Application.h"
+using namespace irr;
 
 Application::Application(){
-    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, true, true);
-    device->setResizable(true);
-    if (device){
+    device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(800, 600), 32, false, true, true, &eventReceiver);
+	oldState = state = GameStates::MENU;
+	scene = NULL, bullet = NULL, net = NULL;
+	
+	if (device){
+		device->setResizable(true);
         //irrlicht managers
         driver = device->getVideoDriver();
         smgr = device->getSceneManager();
-        guienv = device->getGUIEnvironment();
         smgr->setAmbientLight(video::SColorf(0.1f,0.1f,0.1f,1.f));
         smgr->setShadowColor(video::SColor(150,0,0,0));
 
         //bullet manager
-        bullet = NULL;//new Bullet();
+        //new Bullet();
 
         //network manager
         net = new Network();
+        debug();
 
-        init();
-        state = MENU_MAIN;
-    }else{
-        bullet = NULL;
-        net = NULL;
+		default_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), "../resources/fonts/Cicle_Gordita.ttf", 16);
+
+		gui::IGUISkin* guienv = device->getGUIEnvironment()->getSkin();
+		guienv->setFont(default_font, gui::EGDF_DEFAULT);
+		guienv->setColor(gui::EGDC_3D_FACE, video::SColor(100, 0, 0, 0));
+		guienv->setColor(gui::EGDC_3D_SHADOW, video::SColor(180, 0, 0, 0));
+		guienv->setColor(gui::EGDC_3D_DARK_SHADOW, video::SColor(180, 0, 0, 0));
+		guienv->setColor(gui::EGDC_3D_HIGH_LIGHT, video::SColor(100, 0, 0, 0));
+		guienv->setColor(gui::EGDC_3D_LIGHT, video::SColor(120, 0, 0, 0));
+		guienv->setColor(gui::EGDC_EDITABLE, video::SColor(45, 0, 0, 0));
+		guienv->setColor(gui::EGDC_FOCUSED_EDITABLE, video::SColor(25, 0, 0, 0));
+		guienv->setColor(gui::EGDC_BUTTON_TEXT, video::SColor(255, 255, 255, 255));
+
+		loadLevel();
     }
 }
 
 Application::~Application(){
-    if(bullet){
-        delete bullet;
+	delete bullet;
+	delete net;
+
+	delete scene;
+	default_font->drop();
+	device->drop();
+}
+
+void Application::loadLevel(){
+	if(scene) delete scene;
+
+	switch(state){
+		case GameStates::MENU:
+			scene = new Menu(device, net);
+			break;
+		case GameStates::CHARACTER_SELECT:
+			scene = NULL;
+			break;
+		case GameStates::EXIT:
+			device->closeDevice();
+			scene = NULL;
+			break;
+		default:
+			scene = new Menu(device, net);
+			break;
+	}
+
+	oldState = state;
+}
+
+void Application::debug(){
+    if (!driver->queryFeature(video::EVDF_PIXEL_SHADER_1_1) && !driver->queryFeature(video::EVDF_ARB_FRAGMENT_PROGRAM_1)){
+        device->getLogger()->log("WARNING: Pixel shaders disabled because of missing driver/hardware support.");
     }
-    if(device){
-        device->drop();
-    }
-    if(net){
-        delete net;
+
+    if (!driver->queryFeature(video::EVDF_VERTEX_SHADER_1_1) && !driver->queryFeature(video::EVDF_ARB_VERTEX_PROGRAM_1)){
+        device->getLogger()->log("WARNING: Vertex shaders disabled because of missing driver/hardware support.");
     }
 }
 
-void Application::init(){
-    if (!driver->queryFeature(video::EVDF_PIXEL_SHADER_1_1) &&
-        !driver->queryFeature(video::EVDF_ARB_FRAGMENT_PROGRAM_1))
-    {
-        device->getLogger()->log("WARNING: Pixel shaders disabled "\
-            "because of missing driver/hardware support.");
-    }
+void Application::updateTitle(){
+	int fps = driver->getFPS();
+    if (lastFPS != fps){
+        core::stringw str = L"Exploot - v0.0.1 [";
+        str += driver->getName();
+        str += "] FPS: ";
+        str += fps;
+		str += " | PING: ";
+		str += net->getPing();
 
-    if (!driver->queryFeature(video::EVDF_VERTEX_SHADER_1_1) &&
-        !driver->queryFeature(video::EVDF_ARB_VERTEX_PROGRAM_1))
-    {
-        device->getLogger()->log("WARNING: Vertex shaders disabled "\
-            "because of missing driver/hardware support.");
+        device->setWindowCaption(str.c_str());
+        lastFPS = fps;
     }
-
-    menu = new Menu(device, net);
 }
 
 bool Application::run(){
-    if(!device){
-        return false;
-    }
+    if(!device) return false;
 
-    int lastFPS = -1;
     ITimer* irrTimer = device->getTimer();
     u32 TimeStamp = irrTimer->getTime(), DeltaTime = 0;
-    while(device->run()){
+
+    while(device->run() && driver){
         DeltaTime = irrTimer->getTime() - TimeStamp;
         TimeStamp = irrTimer->getTime();
-        //bullet->UpdatePhysics(DeltaTime);
-
-        switch(state){
-            case MENU_MAIN:
-                menu->update(DeltaTime, &state);
-                break;
-            case MENU_EXIT:
-                delete menu;
-                device->closeDevice();
-                return true;
-                break;
-        }
         
-        int fps = driver->getFPS();
-        if (lastFPS != fps){
-            core::stringw str = L"Exploot - Client - 0.0.1 [";
-            str += driver->getName();
-            str += "] FPS:";
-            str += fps;
+		this->updateTitle();
 
-            device->setWindowCaption(str.c_str());
-            lastFPS = fps;
-        }
-        
         if(device->isWindowActive()){
             driver->beginScene(true, true, video::SColor(255,100,100,100));
             smgr->drawAll();
-            switch(state){
-                case MENU_MAIN:
-                    menu->drawAll();
-                    break;
-            }
+			device->getGUIEnvironment()->drawAll();
             driver->endScene();
         }
+
+		if(scene) scene->update(DeltaTime, state);
+		if(state != oldState) loadLevel();
     }
 
     return true;
