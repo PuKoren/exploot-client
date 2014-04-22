@@ -1,7 +1,8 @@
+#pragma once
 #include <irrlicht/irrlicht.h>
 
 using namespace irr;
-class MyEventReceiver : public IEventReceiver
+class EventReceiver : public IEventReceiver
 {
 public:
     // This is the one method that we have to implement
@@ -10,8 +11,8 @@ public:
     // This is used to check whether a key is being held down
     virtual bool IsKeyDown(EKEY_CODE keyCode) const;
 
-    MyEventReceiver();
-	~MyEventReceiver();
+    EventReceiver();
+    ~EventReceiver();
 
 private:
     // We use this array to store the current state of each key

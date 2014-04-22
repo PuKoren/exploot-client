@@ -2,6 +2,7 @@
 #include "IGameObject.h"
 #include "Bullet.h"
 #include "Menu.h"
+#include "CharacterScreen.h"
 #include "Network.h"
 
 class Application{
@@ -19,7 +20,7 @@ private:
     scene::ISceneManager *smgr;
     video::IVideoDriver* driver;
 	gui::CGUITTFont* default_font;
-	MyEventReceiver eventReceiver;
+    EventReceiver eventReceiver;
 
     Bullet* bullet;
 	IGameObject* scene;

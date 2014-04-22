@@ -1,14 +1,11 @@
 #pragma once
-#include <vector>
-#include <iostream>
-#include <stdio.h>
 #include <irrlicht/irrlicht.h>
+#include "IGameObject.h"
 #include "EventReceiver.h"
 #include "config.h"
+#include "CGUITTFont.h"
 #include "Network.h"
 #include "exploot-protobuf/build/Message.pb.h"
-
-using namespace irr;
 
 namespace CharacterScreens{
 	enum Screen{
@@ -18,17 +15,19 @@ namespace CharacterScreens{
 }
 
 
-class CharacterScreen{
+class CharacterScreen: public IGameObject{
 private:
-    scene::ICameraSceneNode* camera;
-    gui::IGUIEnvironment* guienv;
-    video::IVideoDriver* driver;
-    scene::ISceneManager* smgr;
-    MyEventReceiver eventReceiver;
     Network* net;
+    EventReceiver* eventmgr;
+
+    IrrlichtDevice* device;
+    gui::CGUITTFont* title_font;
+    scene::ICameraSceneNode* camera;
+
 public:
-    CharacterScreen(IrrlichtDevice* device, Network* net);
+    CharacterScreen(irr::IrrlichtDevice* device, Network* net);
     ~CharacterScreen();
-    void update(u32 DeltaTime, GameStates::GAME_STATE&);
-    void drawAll();
+
+    virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
+    virtual void drawAll();
 };

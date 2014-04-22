@@ -23,7 +23,7 @@ Application::Application(){
 
 		default_font = gui::CGUITTFont::createTTFont(device->getGUIEnvironment(), "../resources/fonts/Cicle_Gordita.ttf", 16);
 
-		gui::IGUISkin* guienv = device->getGUIEnvironment()->getSkin();
+        gui::IGUISkin* guienv = device->getGUIEnvironment()->getSkin();
 		guienv->setFont(default_font, gui::EGDF_DEFAULT);
 		guienv->setColor(gui::EGDC_3D_FACE, video::SColor(100, 0, 0, 0));
 		guienv->setColor(gui::EGDC_3D_SHADOW, video::SColor(180, 0, 0, 0));
@@ -50,21 +50,24 @@ Application::~Application(){
 void Application::loadLevel(){
 	if(scene) delete scene;
 
+    device->getGUIEnvironment()->clear();
+    device->getSceneManager()->clear();
+
 	switch(state){
 		case GameStates::MENU:
 			scene = new Menu(device, net);
 			break;
 		case GameStates::CHARACTER_SELECT:
-			scene = NULL;
+            scene = new CharacterScreen(device, net);
 			break;
 		case GameStates::EXIT:
 			device->closeDevice();
 			scene = NULL;
 			break;
-		default:
-			scene = new Menu(device, net);
-			break;
-	}
+        default:
+            scene = new Menu(device, net);
+            break;
+    }
 
 	oldState = state;
 }

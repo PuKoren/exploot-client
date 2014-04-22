@@ -55,7 +55,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
         tree->setPosition(core::vector3df(2160, 20, 700));
     }
 
-	guienv = device->getGUIEnvironment();
+    gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
     title_font = gui::CGUITTFont::createTTFont(guienv, "../resources/fonts/BEBAS.ttf", 78);
 
     gui::IGUIStaticText* title = guienv->addStaticText(L"EXPLOOT", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true);
@@ -72,14 +72,17 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     overlay->setDraggable(false);
 
     loginBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
-    passwordBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
     loginBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
-    passwordBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     loginBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT));
+    loginBox->setOverrideColor(video::SColor(255, 255, 255, 255));
+
+    passwordBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
+    passwordBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     passwordBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT*2 + 5));
     passwordBox->setPasswordBox(true);
-    loginBox->setOverrideColor(video::SColor(255, 255, 255, 255));
     passwordBox->setOverrideColor(video::SColor(255, 255, 255, 255));
+
+    guienv->setFocus(loginBox);
 
     gui::IGUIStaticText* loginText = guienv->addStaticText(L"Login", core::rect<irr::s32>(0, 0, 50, TEXTBOX_HEIGHT), false, true, overlay);
     loginText->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2 - loginText->getTextWidth() -5, TEXTBOX_HEIGHT));
@@ -114,12 +117,10 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
 
 Menu::~Menu(){
     //clear gui env
-	guienv->clear();
     title_font->drop();
 	
     //clear scene
 	//water->drop();
-	smgr->clear();
 }
 
 void Menu::sendCredentials(){
@@ -143,7 +144,7 @@ void Menu::sendCredentials(){
 }
 
 void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
-	if(((MyEventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_RETURN)){
+    if(((EventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_RETURN)){
         if(wcslen(loginBox->getText()) > 0 && wcslen(passwordBox->getText()) > 0){
 			if(net->Connect() && login_step == LoginSteps::NONE){
 				login_step = LoginSteps::CHALLENGE;
@@ -161,7 +162,7 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
         }
     }
 
-    if(((MyEventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_ESCAPE)){
+    if(((EventReceiver*)device->getEventReceiver())->IsKeyDown(KEY_ESCAPE)){
         gs = GameStates::EXIT;
     }
 
@@ -194,11 +195,6 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
 			}
 		}
     }
-	
-	float ratio = driver->getViewPort().getWidth()/driver->getViewPort().getHeight();
-	if(ratio > 1){
-		camera->setAspectRatio(ratio);
-	}
 }
 
 void Menu::drawAll(){
