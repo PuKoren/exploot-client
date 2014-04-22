@@ -15,7 +15,7 @@ namespace CharacterScreens{
 		SELECT,
 		CREATE
 	};
-};
+}
 
 
 class CharacterScreen{

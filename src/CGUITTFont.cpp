@@ -563,7 +563,7 @@ void CGUITTFont::draw(const core::stringw& text, const core::rect<s32>& position
 	{
 		uchar32_t currentChar = *iter;
 		n = getGlyphIndexByChar(currentChar);
-		bool visible = (Invisible.findFirst(currentChar) == -1);
+		bool visible = (Invisible.findFirst(currentChar) == (size_t)-1);
 		if (n > 0 && visible)
 		{
 			bool lineBreak=false;

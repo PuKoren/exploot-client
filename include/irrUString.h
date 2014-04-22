@@ -207,6 +207,9 @@ inline core::array<u8> getUnicodeBOM(EUTF_ENCODE mode)
 		case EUTFE_UTF32_LE:
 			COPY_ARRAY(BOM_ENCODE_UTF32_LE, BOM_ENCODE_UTF32_LEN);
 			break;
+		case EUTFE_NONE:
+			COPY_ARRAY(BOM_ENCODE_UTF8, BOM_ENCODE_UTF8_LEN);
+			break;
 	}
 	return ret;
 
@@ -707,7 +710,8 @@ public:
 			//! Moves the iterator to the end of the string.
 			void toEnd()
 			{
-				const uchar16_t* a = ref->c_str();
+				//commented as unused
+				//const uchar16_t* a = ref->c_str();
 				pos = ref->size_raw();
 			}
 
@@ -2978,8 +2982,10 @@ public:
 		memcpy((void*)ptr, (void*)array, used * sizeof(uchar16_t));
 		if (endian != unicode::EUTFEE_NATIVE && getEndianness() != endian)
 		{
-			for (size_t i = 0; i <= used; ++i)
-				*ptr++ = unicode::swapEndian16(*ptr);
+			for (size_t i = 0; i <= used; ++i){
+				ptr++;
+				if(ptr) *ptr = unicode::swapEndian16(*ptr);
+			}
 		}
 		ret.set_used(used + (addBOM ? unicode::BOM_UTF16_LEN : 0));
 		ret.push_back(0);

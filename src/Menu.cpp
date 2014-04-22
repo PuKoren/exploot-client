@@ -30,7 +30,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
 	terrain->setMaterialType(video::EMT_DETAIL_MAP);
     terrain->scaleTexture(1.0f, 20.0f);
 
-	scene::ISceneNode* skybox = smgr->addSkyBoxSceneNode(
+	smgr->addSkyBoxSceneNode(
         driver->getTexture("../resources/skyboxes/bluesky/top.jpg"),
         NULL,
         driver->getTexture("../resources/skyboxes/bluesky/left.jpg"),
@@ -117,7 +117,7 @@ Menu::~Menu(){
     title_font->drop();
 	
     //clear scene
-	//delete water;
+	//water->drop();
 	smgr->clear();
 }
 
