@@ -105,10 +105,11 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     noticeText->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     noticeText->setOverrideColor(video::SColor(255, 255, 255, 255));
 
-    scene::ICameraSceneNode* camera = smgr->addCameraSceneNode();
+    camera = smgr->addCameraSceneNode();
     camera->setPosition(core::vector3df(1950, 340, 2100));
     camera->setTarget(core::vector3df(166, 410, -166));
     camera->setFarValue(8000.f);
+	
 }
 
 Menu::~Menu(){
@@ -147,7 +148,7 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
 			if(net->Connect() && login_step == LoginSteps::NONE){
 				login_step = LoginSteps::CHALLENGE;
 				errorText->setText(L"");
-            }else if(!net->Connect()){
+            }else if(!net->Connected()){
                 //server is down or firewall issue
 				std::cout << "Server down or firewall issue." << std::endl;
 				errorText->setText(L"Server may be down or your firewall is blocking.");
@@ -193,6 +194,11 @@ void Menu::update(u32 DeltaTime, GameStates::GAME_STATE& gs){
 			}
 		}
     }
+	
+	float ratio = driver->getViewPort().getWidth()/driver->getViewPort().getHeight();
+	if(ratio > 1){
+		camera->setAspectRatio(ratio);
+	}
 }
 
 void Menu::drawAll(){

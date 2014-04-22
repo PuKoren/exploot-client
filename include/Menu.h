@@ -36,6 +36,7 @@ private:
     video::IVideoDriver* driver;
 	gui::CGUITTFont* title_font;
 	gui::IGUIEnvironment* guienv;
+	scene::ICameraSceneNode* camera;
 	
 	RealisticWaterSceneNode* water;
 

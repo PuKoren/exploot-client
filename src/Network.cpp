@@ -23,6 +23,9 @@ Network::~Network(){
     enet_host_destroy(client);
     enet_deinitialize();
 }
+bool Network::Connected(){
+	return connected;	
+}
 
 bool Network::Connect(){
     if(connected) return true;
@@ -43,6 +46,12 @@ bool Network::Connect(){
         connected = true;
     }else{
         std::cout << "Connection failure." << std::endl;
+		enet_host_destroy(client);
+		client = enet_host_create (NULL /* create a client host */,
+                    1 /* only allow 1 outgoing connection */,
+                    2 /* allow up 2 channels to be used, 0 and 1 */,
+                    250000 / 8 /* 56K modem with 56 Kbps downstream bandwidth */,
+                    35000 / 8 /* 56K modem with 14 Kbps upstream bandwidth */);
     }
 
     return connected;

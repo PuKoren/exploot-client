@@ -16,6 +16,7 @@ public:
     bool Connect();
 	std::string getChallenge();
 
+	bool Connected();
     void Send(Message& message);
     int Update(ENetEvent& event, Message::MessageType&, std::string&);
 private:
