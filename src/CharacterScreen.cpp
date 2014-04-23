@@ -41,10 +41,33 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
     gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), mSelectedCharName, -1, L"Create", L"Create a new character");
     create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, mSelectedCharName->getTextHeight()));
     //character->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
+
+    eventmgr->setListener(this);
 }
 
 CharacterScreen::~CharacterScreen(){
     title_font->drop();
+}
+
+bool CharacterScreen::OnEvent(const SEvent& e){
+    if (e.EventType == irr::EET_GUI_EVENT){
+        /*
+        if (e.EventType == irr::gui::EGUIET_BUTTON){
+            mScreenState == CharacterStates::CREATE;
+            core::list<irr::scene::ISceneNode*> list = device->getSceneManager()->getRootSceneNode()->getChildren();
+            for(unsigned int i = 0; i < list.size(); i++){
+                scene::ISceneNodeAnimator* anim = device->getSceneManager()->createFlyStraightAnimator(
+                            core::vector3df(),
+                            core::vector3df(), 10);
+
+                //(list.begin()+i)->addAnimator(anim);
+                anim->drop();
+            }
+            return true;
+        }*/
+    }
+
+    return false;
 }
 
 void CharacterScreen::updateCharacterList(){

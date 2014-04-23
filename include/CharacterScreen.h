@@ -26,7 +26,7 @@ struct Character{
     std::string char_name;
 };
 
-class CharacterScreen: public IGameObject{
+class CharacterScreen: public IGameObject, public IEventReceiver{
 private:
     Network* mNet;
     EventReceiver* eventmgr;
@@ -42,6 +42,7 @@ private:
 
     void updateCharacterList();
     void requestCharacterList();
+    virtual bool OnEvent(const SEvent& event);
 
 public:
     CharacterScreen(irr::IrrlichtDevice* device, Network* pNet);

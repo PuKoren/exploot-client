@@ -13,8 +13,11 @@ public:
 
     EventReceiver();
     ~EventReceiver();
+    void setListener(IEventReceiver* pListener);
+    void remListener();
 
 private:
     // We use this array to store the current state of each key
     bool KeyIsDown[KEY_KEY_CODES_COUNT];
+    IEventReceiver* mListener;
 };
