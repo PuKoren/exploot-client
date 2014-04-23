@@ -1,7 +1,10 @@
 #include "CharacterScreen.h"
 using namespace irr;
 
-CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *net){
+CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
+    mScreenState = CharacterStates::LIST;
+    mNet = pNet;
+    mSelectedCharId = 0;
     this->device = device;
     this->device->getCursorControl()->setVisible(true);
 
@@ -28,15 +31,15 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *net){
     title->setOverrideColor(video::SColor(255, 255, 255, 255));
     title->setOverrideFont(title_font);
 
-    gui::IGUIStaticText* character = guienv->addStaticText(L"Koren (13)", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3));
-    character->setRelativePosition(core::position2di(0, driver->getScreenSize().Height - driver->getScreenSize().Height/3));
+    mSelectedCharName = guienv->addStaticText(L"", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3));
+    mSelectedCharName->setRelativePosition(core::position2di(0, driver->getScreenSize().Height - driver->getScreenSize().Height/3));
     //character->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
-    character->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_UPPERLEFT);
-    character->setOverrideColor(video::SColor(255, 255, 255, 255));
+    mSelectedCharName->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_UPPERLEFT);
+    mSelectedCharName->setOverrideColor(video::SColor(255, 255, 255, 255));
 
 
-    gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), character, -1, L"Create", L"Create a new character");
-    create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, character->getTextHeight()));
+    gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), mSelectedCharName, -1, L"Create", L"Create a new character");
+    create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, mSelectedCharName->getTextHeight()));
     //character->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
 }
 
@@ -44,9 +47,57 @@ CharacterScreen::~CharacterScreen(){
     title_font->drop();
 }
 
+void CharacterScreen::updateCharacterList(){
+    std::cout << "Received character list. Size: " << mCharList.size() << std::endl;
+    if(mCharList.size() > 0){
+        CConverter c;
+        mSelectedCharName->setText(c.strToWchart(mCharList[mSelectedCharId].char_name + " (" + std::to_string(mCharList[mSelectedCharId].char_level) + ")"));
+    }
+}
+
+void CharacterScreen::requestCharacterList(){
+    Message msg; Characters msgChar;
+    Message_MessageData* msgData = msg.add_message();
+    msgChar.set_type(Characters::LIST);
+    msgData->set_type(Message::CHARACTER);
+    std::string data= msgChar.SerializeAsString();
+    msgData->set_data(data);
+    mNet->Send(msg);
+}
+
 void CharacterScreen::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
     if(eventmgr->IsKeyDown(KEY_ESCAPE)){
         gs = GameStates::MENU;
+    }
+
+    if(mScreenState ==  CharacterStates::LIST){
+        //send character list query
+        requestCharacterList();
+        mScreenState = CharacterStates::LIST_PENDING;
+    }
+
+    ENetEvent ev; Message_MessageType type; std::string data;
+    if(mNet->Update(ev, type, data) > 0){
+        if(type == Message::CHARACTER){
+            Characters msg;
+            switch(mScreenState){
+                case CharacterStates::LIST_PENDING:
+                    msg.ParseFromString(data);
+                    for(int i = 0; i < msg.characterlist_size(); i++){
+                        Character c;
+                        c.char_id = msg.characterlist(i).char_id();
+                        c.char_level = msg.characterlist(i).char_level();
+                        c.char_name = msg.characterlist(i).char_name();
+                        mCharList.push_back(c);
+                    }
+                    updateCharacterList();
+                    mScreenState = CharacterStates::LIST_DONE;
+                break;
+            default:
+                std::cout << "Message type not handled yet." << std::endl;
+                break;
+            }
+        }
     }
 }
 

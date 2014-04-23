@@ -3,7 +3,7 @@ project(exploot-client)
 cmake_minimum_required(VERSION 2.8)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
+    list(APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs -Wall -Wno-long-long -pedantic")
 endif()
 
 #EXTERNAL PACKAGES (IRRLICHT)
