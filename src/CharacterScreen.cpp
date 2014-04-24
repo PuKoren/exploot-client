@@ -47,6 +47,7 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
 
 CharacterScreen::~CharacterScreen(){
     title_font->drop();
+	eventmgr->remListener();
 }
 
 bool CharacterScreen::OnEvent(const SEvent& e){

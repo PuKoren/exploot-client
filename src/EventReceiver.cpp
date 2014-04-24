@@ -28,6 +28,9 @@ void EventReceiver::setListener(IEventReceiver *pListener){
     mListener = pListener;
 }
 
+void EventReceiver::remListener(){
+	mListener = NULL;
+}
 
 EventReceiver::EventReceiver(){
     for (u32 i=0; i<KEY_KEY_CODES_COUNT; ++i){
