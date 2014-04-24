@@ -57,17 +57,13 @@ bool CharacterScreen::OnEvent(const SEvent& e){
 			if(mScreenState == CharacterStates::CREATE){
 				mScreenState = CharacterStates::LIST;
 				create->setText(L"Cancel");
+				mSelectedCharName->setText(L"");
 				finalPos.X = 0.0f;
 			}else{
 				mScreenState = CharacterStates::CREATE;
 				create->setText(L"Create");
 				finalPos.X = -200.0f;				
 			}
-			scene::ISceneNodeAnimator* anim = device->getSceneManager()->createFlyStraightAnimator(
-						device->getSceneManager()->getRootSceneNode()->getPosition(),
-						finalPos, 1000);
-			device->getSceneManager()->getRootSceneNode()->addAnimator(anim);
-			anim->drop();
 		}
     }
 

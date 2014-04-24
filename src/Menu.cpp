@@ -46,15 +46,6 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     water->setWaterColor(video::SColorf(1, 1, 1, 0.f));
     water->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 
-	scene::IAnimatedMesh* mesh = smgr->getMesh("../resources/models/trees/tree4-fbx.obj");
-	scene::IAnimatedMeshSceneNode* tree = smgr->addAnimatedMeshSceneNode(mesh);
-    if(tree){
-        tree->setScale(core::vector3df(30.f, 30.f, 30.f));
-        tree->setMaterialFlag(video::EMF_LIGHTING, false);
-        tree->setMaterialType( video::EMT_TRANSPARENT_ALPHA_CHANNEL);
-        tree->setPosition(core::vector3df(2160, 20, 700));
-    }
-
     gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
     title_font = gui::CGUITTFont::createTTFont(guienv, "../resources/fonts/BEBAS.ttf", 78);
 
@@ -112,6 +103,11 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     camera->setPosition(core::vector3df(1950, 340, 2100));
     camera->setTarget(core::vector3df(166, 410, -166));
     camera->setFarValue(8000.f);
+	
+	scene::ISceneNodeAnimator* anim = device->getSceneManager()->createFlyCircleAnimator(
+				core::vector3df(), 300.f, 0.0001f);
+	terrain->addAnimator(anim);
+	anim->drop();
 	
 }
 
