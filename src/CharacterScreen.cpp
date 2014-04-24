@@ -38,7 +38,7 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
     mSelectedCharName->setOverrideColor(video::SColor(255, 255, 255, 255));
 
 
-    gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), mSelectedCharName, -1, L"Create", L"Create a new character");
+    create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), mSelectedCharName, -1, L"Create", L"Create a new character");
     create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, mSelectedCharName->getTextHeight()));
     //character->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
 
@@ -52,27 +52,30 @@ CharacterScreen::~CharacterScreen(){
 
 bool CharacterScreen::OnEvent(const SEvent& e){
     if (e.EventType == irr::EET_GUI_EVENT){
-        /*
-        if (e.EventType == irr::gui::EGUIET_BUTTON){
-            mScreenState == CharacterStates::CREATE;
-            core::list<irr::scene::ISceneNode*> list = device->getSceneManager()->getRootSceneNode()->getChildren();
-            for(unsigned int i = 0; i < list.size(); i++){
-                scene::ISceneNodeAnimator* anim = device->getSceneManager()->createFlyStraightAnimator(
-                            core::vector3df(),
-                            core::vector3df(), 10);
-
-                //(list.begin()+i)->addAnimator(anim);
-                anim->drop();
-            }
-            return true;
-        }*/
+		if(e.GUIEvent.EventType == gui::EGET_BUTTON_CLICKED){
+			core::vector3df finalPos = device->getSceneManager()->getRootSceneNode()->getPosition();
+			if(mScreenState == CharacterStates::CREATE){
+				mScreenState = CharacterStates::LIST;
+				create->setText(L"Cancel");
+				finalPos.X = 0.0f;
+			}else{
+				mScreenState = CharacterStates::CREATE;
+				create->setText(L"Create");
+				finalPos.X = -200.0f;				
+			}
+			scene::ISceneNodeAnimator* anim = device->getSceneManager()->createFlyStraightAnimator(
+						device->getSceneManager()->getRootSceneNode()->getPosition(),
+						finalPos, 1000);
+			device->getSceneManager()->getRootSceneNode()->addAnimator(anim);
+			anim->drop();
+		}
     }
 
     return false;
 }
 
 void CharacterScreen::updateCharacterList(){
-    std::cout << "Received character list. Size: " << mCharList.size() << std::endl;
+    std::cout << "Received character list (" << mCharList.size() << ")"<< std::endl;
     if(mCharList.size() > 0){
         CConverter c;
         mSelectedCharName->setText(c.strToWchart(mCharList[mSelectedCharId].char_name + " (" + std::to_string(mCharList[mSelectedCharId].char_level) + ")"));

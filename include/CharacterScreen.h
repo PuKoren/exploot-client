@@ -33,6 +33,7 @@ private:
 
     IrrlichtDevice* device;
     gui::CGUITTFont* title_font;
+	gui::IGUIButton* create;
     irr::u32 mSelectedCharId;
     gui::IGUIStaticText* mSelectedCharName;
     scene::ICameraSceneNode* camera;
