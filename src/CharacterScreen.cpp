@@ -1,6 +1,12 @@
 #include "CharacterScreen.h"
 using namespace irr;
 
+enum GUICharacterScreen{
+    GUI_ID_CREATE_BUTTON,
+    GUI_ID_CREATECONFIRM_BUTTON,
+	GUI_ID_CREATECANCEL_BUTTON
+};
+
 CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
     mScreenState = CharacterStates::LIST;
     mNet = pNet;
@@ -15,54 +21,67 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
 
     smgr->addLightSceneNode(0, core::vector3df(-20, 20, -10));
     camera = smgr->addCameraSceneNode(0, core::vector3df(0, 0, -25));
-
-    irr::scene::ISceneNode* cube = smgr->addSphereSceneNode(5.f, 64);
-    irr::scene::ISceneNodeAnimator* anim = smgr->createRotationAnimator(core::vector3df(0, 0.2f, 0));
-    if(anim){
-        cube->addAnimator(anim);
-    }
-    anim->drop();
+	createScreen = new CGUIEmptyElement(guienv, guienv->getRootGUIElement());
+	selectScreen = new CGUIEmptyElement(guienv, guienv->getRootGUIElement());
 
     title_font = gui::CGUITTFont::createTTFont(guienv, "../resources/fonts/BEBAS.ttf", 78);
 
-    gui::IGUIStaticText* title = guienv->addStaticText(L"Character Select", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3));
-    //title->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
+    gui::IGUIStaticText* title = guienv->addStaticText(L"Character Select", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true, selectScreen);
     title->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
-    title->setOverrideColor(video::SColor(255, 255, 255, 255));
     title->setOverrideFont(title_font);
+	
+	gui::IGUIStaticText* titlec = guienv->addStaticText(L"Character Create", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true, createScreen);
+    titlec->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER);
+    titlec->setOverrideFont(title_font);
 
-    mSelectedCharName = guienv->addStaticText(L"", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3));
+    mSelectedCharName = guienv->addStaticText(L"", core::rect<irr::s32>(0,0, driver->getScreenSize().Width, driver->getScreenSize().Height/3), false, true, selectScreen);
     mSelectedCharName->setRelativePosition(core::position2di(0, driver->getScreenSize().Height - driver->getScreenSize().Height/3));
-    //character->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
     mSelectedCharName->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_UPPERLEFT);
-    mSelectedCharName->setOverrideColor(video::SColor(255, 255, 255, 255));
 
 
-    create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), mSelectedCharName, -1, L"Create", L"Create a new character");
-    create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, mSelectedCharName->getTextHeight()));
-    //character->setAlignment(gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT, gui::EGUIA_UPPERLEFT, gui::EGUIA_LOWERRIGHT);
-
+    gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), selectScreen, GUI_ID_CREATE_BUTTON, L"Create", L"Create a new character");
+    create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, driver->getViewPort().getHeight() - 150));
+	
+	gui::IGUIWindow* overlay = guienv->addWindow(core::rect<s32>(0, 150, 300, 300), false, 0, createScreen);
+	overlay->setDrawTitlebar(false);
+    overlay->getCloseButton()->setVisible(false);
+    overlay->setDraggable(false);
+	
+	guienv->addStaticText(L"Nickname:", core::rect<irr::s32>(500/2 - 250 - 100, 0, 100, 50), false, true, overlay);
+	guienv->addEditBox(L"", core::rect<irr::s32>(500/2 - 250/2, 0, 250, 50), true, overlay);
+	
+	
+	gui::IGUIButton* createc = guienv->addButton(core::rect<s32>(0, 0, 200, 50), createScreen, GUI_ID_CREATECONFIRM_BUTTON, L"Confirm Creation", L"Create the character and start play now !");
+    createc->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 100, driver->getScreenSize().Height - 150));
+	
+	gui::IGUIButton* createcancel = guienv->addButton(core::rect<s32>(0, 0, 200, 50), createScreen, GUI_ID_CREATECANCEL_BUTTON, L"Cancel", L"Back to character list");
+    createcancel->setRelativePosition(createc->getRelativePosition() + core::vector2di(0, 50));
+	
+	createScreen->setVisible(false);
     eventmgr->setListener(this);
 }
 
 CharacterScreen::~CharacterScreen(){
     title_font->drop();
 	eventmgr->remListener();
+	createScreen->drop();
+	selectScreen->drop();
 }
 
 bool CharacterScreen::OnEvent(const SEvent& e){
     if (e.EventType == irr::EET_GUI_EVENT){
+		s32 id = e.GUIEvent.Caller->getID();
 		if(e.GUIEvent.EventType == gui::EGET_BUTTON_CLICKED){
-			core::vector3df finalPos = device->getSceneManager()->getRootSceneNode()->getPosition();
-			if(mScreenState == CharacterStates::CREATE){
-				mScreenState = CharacterStates::LIST;
-				create->setText(L"Cancel");
-				mSelectedCharName->setText(L"");
-				finalPos.X = 0.0f;
-			}else{
-				mScreenState = CharacterStates::CREATE;
-				create->setText(L"Create");
-				finalPos.X = -200.0f;				
+			if(id == GUI_ID_CREATECANCEL_BUTTON){
+				createScreen->setVisible(false);
+				selectScreen->setVisible(true);
+				return true;
+			}else if(id == GUI_ID_CREATE_BUTTON){
+				createScreen->setVisible(true);
+				selectScreen->setVisible(false);
+				return true;
+			}else if(id == GUI_ID_CREATECONFIRM_BUTTON){
+				//send creation information to server
 			}
 		}
     }

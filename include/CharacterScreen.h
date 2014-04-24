@@ -6,6 +6,7 @@
 #include "config.h"
 #include "CConverter.h"
 #include "CGUITTFont.h"
+#include "CGUIEmptyElement.h"
 #include "Network.h"
 #include "exploot-protobuf/build/Message.pb.h"
 #include "exploot-protobuf/build/Characters.pb.h"
@@ -33,7 +34,8 @@ private:
 
     IrrlichtDevice* device;
     gui::CGUITTFont* title_font;
-	gui::IGUIButton* create;
+	gui::IGUIElement* selectScreen;
+	gui::IGUIElement* createScreen;
     irr::u32 mSelectedCharId;
     gui::IGUIStaticText* mSelectedCharName;
     scene::ICameraSceneNode* camera;
