@@ -42,14 +42,15 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
     gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), selectScreen, GUI_ID_CREATE_BUTTON, L"Create", L"Create a new character");
     create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, driver->getViewPort().getHeight() - 150));
 	
-	gui::IGUIWindow* overlay = guienv->addWindow(core::rect<s32>(0, 150, 300, 300), false, 0, createScreen);
+    gui::IGUIWindow* overlay = guienv->addWindow(core::rect<s32>(0, 0, 200, 300), false, 0, createScreen);
+    overlay->setRelativePosition(core::position2di(50, driver->getScreenSize().Height/2 - 150));
 	overlay->setDrawTitlebar(false);
     overlay->getCloseButton()->setVisible(false);
     overlay->setDraggable(false);
 	
-	guienv->addStaticText(L"Nickname:", core::rect<irr::s32>(500/2 - 250 - 100, 0, 100, 50), false, true, overlay);
-	guienv->addEditBox(L"", core::rect<irr::s32>(500/2 - 250/2, 0, 250, 50), true, overlay);
-	
+    guienv->addStaticText(L"Nickname:", core::rect<irr::s32>(0, 0, 60, 20), false, true, overlay)->setRelativePosition(core::position2di(5, 5));
+    mCreationCharName = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, 120, 20), true, overlay);
+    mCreationCharName->setRelativePosition(core::position2di(70, 5));
 	
 	gui::IGUIButton* createc = guienv->addButton(core::rect<s32>(0, 0, 200, 50), createScreen, GUI_ID_CREATECONFIRM_BUTTON, L"Confirm Creation", L"Create the character and start play now !");
     createc->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 100, driver->getScreenSize().Height - 150));
@@ -68,6 +69,25 @@ CharacterScreen::~CharacterScreen(){
 	selectScreen->drop();
 }
 
+void CharacterScreen::sendCharacterCreation(){
+    Message msg;
+    Message_MessageData* msgData = msg.add_message();
+    msgData->set_type(Message::CHARACTER);
+
+    CConverter c;
+    Characters charMsg;
+    charMsg.set_type(Characters::CREATE);
+    Characters_CharCreate* ccMsg = charMsg.mutable_createdata();
+    ccMsg->set_char_name(c.wchartToStr(mCreationCharName->getText()));
+    ccMsg->set_char_id(0);
+    ccMsg->set_created(false);
+
+    msgData->set_data(charMsg.SerializeAsString());
+    mNet->Send(msg);
+
+    mScreenState = CharacterStates::CREATE_PENDING;
+}
+
 bool CharacterScreen::OnEvent(const SEvent& e){
     if (e.EventType == irr::EET_GUI_EVENT){
 		s32 id = e.GUIEvent.Caller->getID();
@@ -81,7 +101,9 @@ bool CharacterScreen::OnEvent(const SEvent& e){
 				selectScreen->setVisible(false);
 				return true;
 			}else if(id == GUI_ID_CREATECONFIRM_BUTTON){
-				//send creation information to server
+                if(mScreenState != CharacterStates::CREATE_PENDING){
+                    sendCharacterCreation();
+                }
 			}
 		}
     }
@@ -90,7 +112,7 @@ bool CharacterScreen::OnEvent(const SEvent& e){
 }
 
 void CharacterScreen::updateCharacterList(){
-    std::cout << "Received character list (" << mCharList.size() << ")"<< std::endl;
+    std::cout << "Building character list (" << mCharList.size() << ")"<< std::endl;
     if(mCharList.size() > 0){
         CConverter c;
         mSelectedCharName->setText(c.strToWchart(mCharList[mSelectedCharId].char_name + " (" + std::to_string(mCharList[mSelectedCharId].char_level) + ")"));
@@ -135,8 +157,26 @@ void CharacterScreen::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
                     updateCharacterList();
                     mScreenState = CharacterStates::LIST_DONE;
                 break;
+            case CharacterStates::CREATE_PENDING:
+                msg.ParseFromString(data);
+                if(msg.createdata().created()){
+                    mScreenState = CharacterStates::LIST_DONE;
+                    Character c;
+                    c.char_name = msg.createdata().char_name();
+                    c.char_level = 1;
+                    c.char_id = msg.createdata().char_id();
+                    mCharList.push_back(c);
+                    mSelectedCharId = mCharList.size()-1;
+                    updateCharacterList();
+                    createScreen->setVisible(false);
+                    selectScreen->setVisible(true);
+                }else{
+                    //name probably already taken
+                    mScreenState = CharacterStates::CREATE;
+                }
+                break;
             default:
-                std::cout << "Message type not handled yet." << std::endl;
+                std::cout << "Message type not handled yet:" << type << std::endl;
                 break;
             }
         }

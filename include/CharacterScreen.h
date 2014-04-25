@@ -16,8 +16,9 @@ namespace CharacterStates{
         LIST,
         LIST_PENDING,
         LIST_DONE,
-		SELECT,
-		CREATE
+        CREATE,
+        CREATE_PENDING,
+        CREATE_DONE
 	};
 }
 
@@ -34,19 +35,23 @@ private:
 
     IrrlichtDevice* device;
     gui::CGUITTFont* title_font;
+
 	gui::IGUIElement* selectScreen;
 	gui::IGUIElement* createScreen;
-    irr::u32 mSelectedCharId;
+    gui::IGUIEditBox* mCreationCharName;
     gui::IGUIStaticText* mSelectedCharName;
+
     scene::ICameraSceneNode* camera;
 
     CharacterStates::States mScreenState;
-    std::vector<Character> mCharList;
 
     void updateCharacterList();
     void requestCharacterList();
+    void sendCharacterCreation();
     virtual bool OnEvent(const SEvent& event);
 
+    std::vector<Character> mCharList;
+    irr::u32 mSelectedCharId;
 public:
     CharacterScreen(irr::IrrlichtDevice* device, Network* pNet);
     ~CharacterScreen();

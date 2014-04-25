@@ -66,12 +66,14 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
     loginBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     loginBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT));
     loginBox->setOverrideColor(video::SColor(255, 255, 255, 255));
+    loginBox->setText(L"koren");
 
     passwordBox = guienv->addEditBox(L"", core::rect<irr::s32>(0, 0, TEXTBOX_WIDTH, TEXTBOX_HEIGHT), true, overlay);
     passwordBox->setAlignment(gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER, gui::EGUIA_CENTER);
     passwordBox->setRelativePosition(core::position2di(LOGIN_WIDTH/2 - TEXTBOX_WIDTH/2, TEXTBOX_HEIGHT*2 + 5));
     passwordBox->setPasswordBox(true);
     passwordBox->setOverrideColor(video::SColor(255, 255, 255, 255));
+    passwordBox->setText(L"abcd");
 
     guienv->setFocus(loginBox);
 
@@ -108,7 +110,7 @@ Menu::Menu(IrrlichtDevice* device, Network* netManager){
 				core::vector3df(), 300.f, 0.0001f);
 	terrain->addAnimator(anim);
 	anim->drop();
-	
+
 }
 
 Menu::~Menu(){
