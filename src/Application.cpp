@@ -64,6 +64,9 @@ void Application::loadLevel(){
 			device->closeDevice();
 			scene = NULL;
 			break;
+        case GameStates::INGAME:
+            scene = new InGameScreen(device, net);
+            break;
         default:
             scene = new Menu(device, net);
             break;

@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "Menu.h"
 #include "CharacterScreen.h"
+#include "InGame.h"
 #include "Network.h"
 
 class Application{

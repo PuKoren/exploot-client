@@ -18,7 +18,8 @@ namespace CharacterStates{
         LIST_DONE,
         CREATE,
         CREATE_PENDING,
-        CREATE_DONE
+        CREATE_DONE,
+        SELECT
 	};
 }
 

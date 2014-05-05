@@ -3,6 +3,7 @@ using namespace irr;
 
 enum GUICharacterScreen{
     GUI_ID_CREATE_BUTTON,
+    GUI_ID_SELECT_BUTTON,
     GUI_ID_CREATECONFIRM_BUTTON,
 	GUI_ID_CREATECANCEL_BUTTON
 };
@@ -40,7 +41,10 @@ CharacterScreen::CharacterScreen(IrrlichtDevice *device, Network *pNet){
 
 
     gui::IGUIButton* create = guienv->addButton(core::rect<s32>(0, 0, 100, 50), selectScreen, GUI_ID_CREATE_BUTTON, L"Create", L"Create a new character");
-    create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 50, driver->getViewPort().getHeight() - 150));
+    create->setRelativePosition(core::position2di(driver->getScreenSize().Width/2 - 100, driver->getViewPort().getHeight() - 150));
+
+    gui::IGUIButton* select = guienv->addButton(core::rect<s32>(0, 0, 100, 50), selectScreen, GUI_ID_SELECT_BUTTON, L"Select", L"Select current character");
+    select->setRelativePosition(core::position2di(driver->getScreenSize().Width/2, driver->getViewPort().getHeight() - 150));
 	
     gui::IGUIWindow* overlay = guienv->addWindow(core::rect<s32>(0, 0, 200, 300), false, 0, createScreen);
     overlay->setRelativePosition(core::position2di(50, driver->getScreenSize().Height/2 - 150));
@@ -104,7 +108,9 @@ bool CharacterScreen::OnEvent(const SEvent& e){
                 if(mScreenState != CharacterStates::CREATE_PENDING){
                     sendCharacterCreation();
                 }
-			}
+            }else if(id == GUI_ID_SELECT_BUTTON){
+                mScreenState = CharacterStates::SELECT;
+            }
 		}
     }
 
@@ -138,6 +144,9 @@ void CharacterScreen::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
         //send character list query
         requestCharacterList();
         mScreenState = CharacterStates::LIST_PENDING;
+    }else if(mScreenState == CharacterStates::SELECT){
+        //send select char to server, if OK, change gamestate to INGAME
+        gs = GameStates::INGAME;
     }
 
     ENetEvent ev; Message_MessageType type; std::string data;
