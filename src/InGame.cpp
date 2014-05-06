@@ -6,7 +6,7 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
     this->device = device;
     this->device->getCursorControl()->setVisible(true);
 
-    irr::gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
+    //irr::gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
     irr::scene::ISceneManager* smgr = device->getSceneManager();
     video::IVideoDriver* driver = device->getVideoDriver();
     eventmgr = (EventReceiver*)device->getEventReceiver();
@@ -17,7 +17,7 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
 
     irr::video::IImage* map = driver->createImageFromFile("../resources/terrain/world_01.png");
 
-    int decal = 32;
+    irr::u32 decal = 32;
     for(irr::u32 zone = 0; zone < 4; zone++){
         for(irr::u32 y = 0; y < decal; y++){
             for(irr::u32 x = 0; x < map->getDimension().Width; x++){
