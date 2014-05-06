@@ -32,7 +32,6 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
                 }
             }
         }
-        std::cout << std::endl;
     }
 
 
