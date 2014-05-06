@@ -15,6 +15,8 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
     camera->setPosition(core::vector3df(0,0, -100));
     camera->setTarget(core::vector3df(0.f, 0.f, 0.f));
 
+    smgr->addLightSceneNode(0, core::vector3df(-20,50,0));
+
     irr::video::IImage* map = driver->createImageFromFile("../resources/terrain/world_01.png");
 
     irr::u32 decal = 32;
@@ -27,24 +29,13 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
                         until++;
                     }while(until < map->getDimension().Width && map->getPixel(until, y+ (zone*decal)).getRed() == 170 && map->getPixel(until, y+ (zone*decal)).getGreen() == 85);
                     float decalX = (until-x)/2.f;
-                    smgr->addCubeSceneNode(1.f, 0, -1, core::vector3df(decalX + x, decal-y, (4-zone) * 40), core::vector3df(0.f, 0.f, 0.f), core::vector3df(until-x, 1.f, 3.f));
+                    irr::scene::ISceneNode* cube = smgr->addCubeSceneNode(1.f, 0, -1, core::vector3df(decalX + x, decal-y, (4-zone) * 40), core::vector3df(0.f, 0.f, 0.f), core::vector3df(until-x, 1.f, 3.f));
+                    cube->setMaterialFlag(irr::video::EMF_LIGHTING, true);
                     x = until-1;
                 }
             }
         }
     }
-
-
-    /*
-    for(irr::u32 x = 0; x < map->getDimension().Width; x++){
-        for(irr::u32 y = 0; y < map->getDimension().Height; y++){
-            int zone = floor(y/32);
-            float z = 20 * zone;
-            if(map->getPixel(x, y).getRed() == 170 && map->getPixel(x, y).getGreen() == 85){
-                smgr->addCubeSceneNode(1.f, 0, -1, core::vector3df(x, (128-y)-(32*zone), z));
-            }
-        }
-    }*/
 }
 
 InGameScreen::~InGameScreen(){
