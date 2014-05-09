@@ -5,11 +5,13 @@ using namespace irr;
 WorldGenerator::WorldGenerator(){
     m_smgr = NULL;
     m_drv = NULL;
+    m_bullet = NULL;
 }
 
-WorldGenerator::WorldGenerator(scene::ISceneManager* p_smgr, video::IVideoDriver* p_drv){
+WorldGenerator::WorldGenerator(scene::ISceneManager* p_smgr, video::IVideoDriver* p_drv, Bullet* p_bullet){
     m_smgr = p_smgr;
     m_drv = p_drv;
+    m_bullet = p_bullet;
 }
 
 WorldGenerator::~WorldGenerator(){
@@ -33,7 +35,9 @@ void WorldGenerator::LoadLevel(short p_lvl, short p_dim){
                         until++;
                     }while(until < map->getDimension().Width && map->getPixel(until, y+ (zone*decal)).getRed() == 170 && map->getPixel(until, y+ (zone*decal)).getGreen() == 85);
                     float decalX = (p_lvl-1)*128 + (until-x)/2.f;
-                    m_smgr->addCubeSceneNode(1.f, 0, -1, core::vector3df(decalX + x, decal-y, (4-zone) * 40), core::vector3df(0.f, 0.f, 0.f), core::vector3df(until-x, 1.f, 3.f));
+                    irr::scene::ISceneNode* node = m_smgr->addCubeSceneNode(1.f, 0, -1, core::vector3df(decalX + x, decal-y, (4-zone) * 40), core::vector3df(0.f, 0.f, 0.f), core::vector3df(until-x, 1.f, 3.f));
+                    node->getMaterial(0).EmissiveColor = irr::video::SColor(255, map->getPixel(x, y + (zone*decal)).getRed(), map->getPixel(x, y + (zone*decal)).getGreen(), map->getPixel(x, y + (zone*decal)).getBlue());
+                    m_bullet->AddBox(node, 0.f, true);
                     x = until-1;
                 }
             }

@@ -1,3 +1,4 @@
+#pragma once
 #include <irrlicht/irrlicht.h>
 #include <bullet/btBulletDynamicsCommon.h>
 
@@ -8,10 +9,10 @@ public:
     Bullet();
     ~Bullet();
     void UpdatePhysics(u32 TDeltaTime);
-    void AddBox(scene::ISceneNode* node, double mass, bool isKinematic = false);
-    void AddSphere(scene::ISceneNode* node, float radius, double mass, bool isKinematic = false);
+    btRigidBody* AddBox(scene::ISceneNode* node, double mass, bool isKinematic = false);
+    btRigidBody* AddSphere(scene::ISceneNode* node, float radius, double mass, bool isKinematic = false);
 private:
-    void Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, bool isKinematic);
+    btRigidBody* Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, bool isKinematic);
     btCollisionShape* GetSphereShape(float radius);
     btCollisionShape* GetBoxShape(scene::ISceneNode* node);
     void QuaternionToEuler(const btQuaternion &TQuat, btVector3 &TEuler);

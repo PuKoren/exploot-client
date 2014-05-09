@@ -12,6 +12,7 @@
 #include "WorldGenerator.h"
 #include "exploot-protobuf/build/Message.pb.h"
 #include "exploot-protobuf/build/Characters.pb.h"
+#include "Bullet.h"
 
 namespace InGameStates{
     enum States{
@@ -31,6 +32,7 @@ private:
     scene::ICameraSceneNode* camera;
     InGameStates::States mGameState;
     virtual bool OnEvent(const SEvent& event);
+    Bullet* m_bullet;
 public:
     InGameScreen(irr::IrrlichtDevice* device, Network* pNet);
     ~InGameScreen();

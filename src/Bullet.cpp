@@ -56,15 +56,15 @@ void Bullet::QuaternionToEuler(const btQuaternion &TQuat, btVector3 &TEuler) {
     TEuler *= core::RADTODEG;
 }
 
-void Bullet::AddBox(scene::ISceneNode* node, double mass, bool isKinematic){
-    Add(node, mass, GetBoxShape(node), isKinematic);
+btRigidBody* Bullet::AddBox(scene::ISceneNode* node, double mass, bool isKinematic){
+    return Add(node, mass, GetBoxShape(node), isKinematic);
 }
 
-void Bullet::AddSphere(scene::ISceneNode* node, float radius, double mass, bool isKinematic){
-    Add(node, mass, GetSphereShape(radius), isKinematic);
+btRigidBody* Bullet::AddSphere(scene::ISceneNode* node, float radius, double mass, bool isKinematic){
+    return Add(node, mass, GetSphereShape(radius), isKinematic);
 }
 
-void Bullet::Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, bool isKinematic){
+btRigidBody* Bullet::Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, bool isKinematic){
     btTransform Transform;
     Transform.setIdentity();
     core::vector3df pos = node->getPosition();
@@ -76,7 +76,7 @@ void Bullet::Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, 
     Shape->calculateLocalInertia(mass, LocalInertia);
 
     btRigidBody *RigidBody = new btRigidBody(mass, MotionState, Shape, LocalInertia);
-    RigidBody->applyTorque(btVector3(10., 0., 0.));
+    RigidBody->applyTorque(btVector3(0., 0., 0.));
 
     if(isKinematic){
       RigidBody->setCollisionFlags(RigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -87,6 +87,7 @@ void Bullet::Add(scene::ISceneNode* node, double mass, btCollisionShape *Shape, 
 
     World->addRigidBody(RigidBody);
     Objects.push_back(RigidBody);
+    return RigidBody;
 }
 
 btCollisionShape* Bullet::GetSphereShape(float radius){

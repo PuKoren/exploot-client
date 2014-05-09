@@ -21,14 +21,22 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
     anim->drop();
     */
 
-    WorldGenerator gen(smgr, device->getVideoDriver());
+    this->m_bullet = new Bullet();
+
+    for(int i = 0; i < 100; i++){
+        irr::scene::ISceneNode* player = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(rand()%40, rand()%40 + 20, 40.f));
+        player->getMaterial(0).EmissiveColor = irr::video::SColor(255, 255, 0, 0);
+        m_bullet->AddBox(player, 1.f)->setLinearFactor(btVector3(1, 1, 0));
+    }
+
+    WorldGenerator gen(smgr, device->getVideoDriver(), m_bullet);
     gen.LoadLevel(0, 0);
     gen.LoadLevel(1, 0);
     gen.LoadLevel(2, 0);
 }
 
 InGameScreen::~InGameScreen(){
-
+    delete this->m_bullet;
 }
 
 bool InGameScreen::OnEvent(const SEvent &event){
@@ -36,7 +44,7 @@ bool InGameScreen::OnEvent(const SEvent &event){
 }
 
 void InGameScreen::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
-
+    this->m_bullet->UpdatePhysics(DeltaTime);
 }
 
 void InGameScreen::drawAll(){

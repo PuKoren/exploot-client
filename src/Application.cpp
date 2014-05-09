@@ -15,7 +15,7 @@ Application::Application(){
         smgr->setShadowColor(video::SColor(150,0,0,0));
 
         //bullet manager
-        //new Bullet();
+        //bullet = new Bullet();
 
         //network manager
         net = new Network();
@@ -117,6 +117,7 @@ bool Application::run(){
             smgr->drawAll();
 			device->getGUIEnvironment()->drawAll();
             driver->endScene();
+            //bullet->UpdatePhysics(DeltaTime);
         }
 
 		if(scene) scene->update(DeltaTime, state);
