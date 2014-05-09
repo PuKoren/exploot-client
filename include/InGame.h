@@ -9,6 +9,7 @@
 #include "CGUITTFont.h"
 #include "CGUIEmptyElement.h"
 #include "Network.h"
+#include "WorldGenerator.h"
 #include "exploot-protobuf/build/Message.pb.h"
 #include "exploot-protobuf/build/Characters.pb.h"
 
