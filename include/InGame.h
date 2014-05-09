@@ -33,6 +33,8 @@ private:
     InGameStates::States mGameState;
     virtual bool OnEvent(const SEvent& event);
     Bullet* m_bullet;
+    irr::scene::ISceneNode* m_player;
+    btRigidBody* m_playerrb;
 public:
     InGameScreen(irr::IrrlichtDevice* device, Network* pNet);
     ~InGameScreen();

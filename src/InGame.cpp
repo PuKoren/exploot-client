@@ -23,10 +23,15 @@ InGameScreen::InGameScreen(IrrlichtDevice *device, Network *pNet){
 
     this->m_bullet = new Bullet();
 
+    m_player = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(60.f, 40.f, 40.f));
+    m_player->getMaterial(0).EmissiveColor = irr::video::SColor(255, 255, 255, 255);
+    m_playerrb = m_bullet->AddBox(m_player, 1.f);
+    m_playerrb->setLinearFactor(btVector3(1, 1, 0));
+
     for(int i = 0; i < 100; i++){
-        irr::scene::ISceneNode* player = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(rand()%40, rand()%40 + 20, 40.f));
-        player->getMaterial(0).EmissiveColor = irr::video::SColor(255, 255, 0, 0);
-        m_bullet->AddBox(player, 1.f)->setLinearFactor(btVector3(1, 1, 0));
+        irr::scene::ISceneNode* tmp = smgr->addCubeSceneNode(1.0f, 0, 0, core::vector3df(rand()%40, rand()%40 + 20, 40.f));
+        tmp->getMaterial(0).EmissiveColor = irr::video::SColor(255, 128, 50, 30);
+        m_bullet->AddBox(tmp, 1.f)->setLinearFactor(btVector3(1, 1, 0));
     }
 
     WorldGenerator gen(smgr, device->getVideoDriver(), m_bullet);
@@ -44,6 +49,19 @@ bool InGameScreen::OnEvent(const SEvent &event){
 }
 
 void InGameScreen::update(u32 DeltaTime, GameStates::GAME_STATE &gs){
+
+    if(eventmgr->IsKeyDown(KEY_SPACE)){
+        m_playerrb->applyCentralImpulse(btVector3(0,1,0));
+    }
+
+    if(eventmgr->IsKeyDown(KEY_LEFT)){
+        m_playerrb->applyCentralImpulse(btVector3(-1,0,0));
+    }
+
+    if(eventmgr->IsKeyDown(KEY_RIGHT)){
+        m_playerrb->applyCentralImpulse(btVector3(1,0,0));
+    }
+
     this->m_bullet->UpdatePhysics(DeltaTime);
 }
 
