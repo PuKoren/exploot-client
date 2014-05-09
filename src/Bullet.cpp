@@ -24,19 +24,50 @@ void Bullet::UpdatePhysics(u32 TDeltaTime) {
     // Relay the object's orientation to irrlicht
     for(core::list<btRigidBody *>::Iterator it = Objects.begin(); it != Objects.end(); ++it) {
 
-        //UpdateRender(*Iterator);
-        scene::ISceneNode *Node = static_cast<scene::ISceneNode *>((*it)->getUserPointer());
-        TObject = *it;
+        if(!(*it)->isKinematicObject()){
+            //UpdateRender(*Iterator);
+            scene::ISceneNode *Node = static_cast<scene::ISceneNode *>((*it)->getUserPointer());
+            TObject = *it;
 
-        // Set position
-        btVector3 Point = TObject->getCenterOfMassPosition();
-        Node->setPosition(core::vector3df((f32)Point[0], (f32)Point[1], (f32)Point[2]));
+            // Set position
+            btVector3 Point = TObject->getCenterOfMassPosition();
+            Node->setPosition(core::vector3df((f32)Point[0], (f32)Point[1], (f32)Point[2]));
 
-        // Set rotation
-        btVector3 EulerRotation;
-        QuaternionToEuler(TObject->getOrientation(), EulerRotation);
-        Node->setRotation(core::vector3df(EulerRotation[0], EulerRotation[1], EulerRotation[2]));
+            // Set rotation
+            btVector3 EulerRotation;
+            QuaternionToEuler(TObject->getOrientation(), EulerRotation);
+            Node->setRotation(core::vector3df(EulerRotation[0], EulerRotation[1], EulerRotation[2]));
+        }
     }
+
+    /*
+    int numManifolds = World->getDispatcher()->getNumManifolds();
+    for (int i=0;i<numManifolds;i++)
+    {
+        btPersistentManifold* contactManifold =  World->getDispatcher()->getManifoldByIndexInternal(i);
+        const btCollisionObject* obA = contactManifold->getBody0();
+        const btCollisionObject* obB = contactManifold->getBody1();
+
+        int numContacts = contactManifold->getNumContacts();
+        for (int j=0;j<numContacts;j++)
+        {
+            btManifoldPoint& pt = contactManifold->getContactPoint(j);
+            if (pt.getDistance()<0.f)
+            {
+                IBulletObject* objA = ((IBulletObject*)obA->getUserPointer());
+                IBulletObject* objB = ((IBulletObject*)obB->getUserPointer());
+                const btVector3& ptA = pt.getPositionWorldOnA();
+                const btVector3& ptB = pt.getPositionWorldOnB();
+                const btVector3& normalOnB = pt.m_normalWorldOnB;
+                if(objA){
+                    objA->collisionCallback(objB);
+                }
+                if(objB){
+                    objB->collisionCallback(objA);
+                }
+            }
+        }
+    }*/
 }
 
 // Converts a quaternion to an euler angle

@@ -13,6 +13,7 @@
 #include "exploot-protobuf/build/Message.pb.h"
 #include "exploot-protobuf/build/Characters.pb.h"
 #include "Bullet.h"
+#include "Player.h"
 
 namespace InGameStates{
     enum States{
@@ -33,8 +34,7 @@ private:
     InGameStates::States mGameState;
     virtual bool OnEvent(const SEvent& event);
     Bullet* m_bullet;
-    irr::scene::ISceneNode* m_player;
-    btRigidBody* m_playerrb;
+    Player* m_player;
 public:
     InGameScreen(irr::IrrlichtDevice* device, Network* pNet);
     ~InGameScreen();

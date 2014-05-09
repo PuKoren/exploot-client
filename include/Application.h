@@ -1,6 +1,5 @@
 #include <irrlicht/irrlicht.h>
 #include "IGameObject.h"
-#include "Bullet.h"
 #include "Menu.h"
 #include "CharacterScreen.h"
 #include "InGame.h"
@@ -23,7 +22,6 @@ private:
 	gui::CGUITTFont* default_font;
     EventReceiver eventReceiver;
 
-    Bullet* bullet;
 	IGameObject* scene;
     Network* net;
 	

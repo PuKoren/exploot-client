@@ -5,7 +5,7 @@
 
 class IGameObject{
 public:
-    virtual ~IGameObject() {};
+    virtual ~IGameObject() {}
     virtual void drawAll() = 0;
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs) = 0;
 };

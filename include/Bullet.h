@@ -1,6 +1,7 @@
 #pragma once
 #include <irrlicht/irrlicht.h>
 #include <bullet/btBulletDynamicsCommon.h>
+#include "IBulletObject.h"
 
 using namespace irr;
 

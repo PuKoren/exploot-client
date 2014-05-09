@@ -4,7 +4,7 @@ using namespace irr;
 Application::Application(){
     device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(800, 600), 32, false, true, true, &eventReceiver);
 	oldState = state = GameStates::MENU;
-	scene = NULL, bullet = NULL, net = NULL;
+    scene = NULL, net = NULL;
 	
 	if (device){
 		device->setResizable(true);
@@ -13,9 +13,6 @@ Application::Application(){
         smgr = device->getSceneManager();
         smgr->setAmbientLight(video::SColorf(0.1f,0.1f,0.1f,1.f));
         smgr->setShadowColor(video::SColor(150,0,0,0));
-
-        //bullet manager
-        //bullet = new Bullet();
 
         //network manager
         net = new Network();
@@ -39,7 +36,6 @@ Application::Application(){
 }
 
 Application::~Application(){
-	delete bullet;
 	delete net;
 
 	delete scene;
@@ -117,7 +113,6 @@ bool Application::run(){
             smgr->drawAll();
 			device->getGUIEnvironment()->drawAll();
             driver->endScene();
-            //bullet->UpdatePhysics(DeltaTime);
         }
 
 		if(scene) scene->update(DeltaTime, state);
