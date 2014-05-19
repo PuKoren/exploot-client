@@ -55,7 +55,7 @@ private:
     irr::u32 mSelectedCharId;
 public:
     CharacterScreen(irr::IrrlichtDevice* device, Network* pNet);
-    ~CharacterScreen();
+    virtual ~CharacterScreen();
 
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
     virtual void drawAll();

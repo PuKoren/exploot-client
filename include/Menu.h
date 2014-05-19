@@ -45,7 +45,7 @@ private:
 
 public:
     Menu(IrrlichtDevice* device, Network* net);
-    ~Menu();
+    virtual ~Menu();
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE&);
     virtual void drawAll();
 };

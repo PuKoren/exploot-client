@@ -37,7 +37,7 @@ private:
     Player* m_player;
 public:
     InGameScreen(irr::IrrlichtDevice* device, Network* pNet);
-    ~InGameScreen();
+    virtual ~InGameScreen();
 
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
     virtual void drawAll();

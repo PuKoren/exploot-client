@@ -8,7 +8,7 @@
 class Player: public IGameObject, public IBulletObject{
 public:
     Player(irr::scene::ISceneManager* p_smgr, Bullet* p_bullet, irr::IEventReceiver* p_event);
-    ~Player();
+    virtual ~Player();
     virtual void collisionCallback(IBulletObject* p_obj);
     virtual void drawAll();
     virtual void update(irr::u32 DeltaTime, GameStates::GAME_STATE& gs);
