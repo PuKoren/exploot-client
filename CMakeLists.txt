@@ -2,6 +2,8 @@
 project(exploot-client)
 cmake_minimum_required(VERSION 2.8)
 
+set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     list(APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs -Wall -Wno-long-long -pedantic")
 endif()
@@ -14,6 +16,13 @@ find_package(Protobuf REQUIRED)
 find_package(ENet REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(Threads REQUIRED)
+
+if(APPLE)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OpenGL_LIBRARY OpenGL )
+    find_library(IOKIT_FRAMEWORK IOKit)
+    set(EXTRA_LIBS ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_FRAMEWORK})
+endif(APPLE)
 
 #INCLUDES & SRC FILES
 include_directories(
@@ -35,4 +44,4 @@ file(GLOB PROTOSRCS submodules/exploot-protobuf/build/*.cc)
 
 #LINKING AND EXECUTABLE
 add_executable(${PROJECT_NAME} ${SRCS} ${HDRS} ${SUBSRCS} ${SUBHDRS} ${PROTOSRCS} ${PROTOHDRS})
-target_link_libraries(${PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${BULLET_LIBRARIES} ${ENET_LIBRARIES} ${PROTOBUF_LIBRARIES} ${FREETYPE_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${BULLET_LIBRARIES} ${ENET_LIBRARIES} ${PROTOBUF_LIBRARIES} ${FREETYPE_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${EXTRA_LIBS})
